@@ -1,0 +1,99 @@
+@font-face {
+  font-family: 'sanpya';
+  src: url('sanpya.ttf');
+}
+
+@font-face {
+  font-family: 'parabaik';
+  src: url('parabaik.ttf');
+}
+
+@font-face {
+  font-family: 'badsignal';
+  src: url('badsignal.otf');
+}
+
+@font-face {
+  font-family: 'jetbrains';
+  src: url('jetbrains.ttf');
+}
+
+@font-face {
+  font-family: 'thuriya';
+  src: url('thuriya.ttf');
+}
+
+body { background: #000; color: #fff; font-family: 'Parabaik', sans-serif; padding: 20px; margin: 0; display: flex; justify-content: center; }
+#app-container { width: 100%; max-width: 500px; }
+
+/* ---------- Header with Color (Clean & Safe) ---------- */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #333;
+  /* parent color doesn't affect logo now */
+}
+
+.logo {
+  font-family: 'BadSignal', sans-serif;
+  font-size: 32px;
+  color: #ff9d00 !important; /* force orange */
+}
+.header-menu button {
+  background: none;
+  border: none;
+  color: #00ff00;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+/* Posts */
+.post-card { border: 1px solid #333; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+.username-text { color: #8be9fd; font-weight: bold; }
+.post-body { margin-bottom: 10px; line-height:1.6; }
+
+/* Form Styles */
+#post-text { width: 100%; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; box-sizing: border-box; min-height: 80px; font-family: inherit; }
+#submit-btn { background: transparent; border: 1px solid #8be9fd; color: #8be9fd; margin: 10px 0; cursor: pointer; padding: 8px 20px; width: 100%; font-family: inherit; }
+
+/* Comments */
+.comment-section { margin-top: 10px; border-top: 1px solid #333; padding-top: 10px; }
+.comment-input { width: 100%; background: transparent; border: 1px solid #555; color: #fff; padding: 5px; margin-top: 10px; font-family: inherit; }
+.actions-row { display: flex; gap: 10px; margin-top: 5px; }
+.btn-small { background: transparent; border: 1px solid #555; color: #fff; padding: 4px 10px; cursor: pointer; font-size: 12px; }
+
+/* Welcome Page Styles */
+.hero { text-align: center; margin: 40px 0; }
+.hero h1 { font-size: 3rem; color: #8be9fd; }
+.features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+.disclaimer { background: #111; padding: 15px; border-left: 2px solid #555; margin: 20px 0; }
+.enter-btn { display: block; text-align: center; border: 1px solid #8be9fd; color: #8be9fd; padding: 10px; text-decoration: none; }
+
+a { text-decoration: none !important; }
+
+.post-time { font-size: 12px; margin-left: 5px; }
+.time-green { color: #00ff00; }
+.time-orange { color: #ff9d00; }
+
+/* ---------- READ MORE SMOOTH EXPAND (FIXED FOR MYANMAR FONTS) ---------- */
+
+.post-body.collapsed{
+  max-height:3.6em;
+  overflow:hidden;
+  padding-top:2px;
+  padding-bottom:2px;
+  transition:max-height .35s ease;
+}
+
+.post-body.expanded{
+  max-height:1000px;
+}
+
+.read-more-btn{
+  font-size:12px;
+  color:#8be9fd;
+  cursor:pointer;
+}
