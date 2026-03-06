@@ -64,12 +64,12 @@ body {
 }
 
 /* Posts */
-
 .post-card {
   border: 1px solid #333;
-  padding: 15px;
+  padding: 20px; /* Padding နည်းနည်းတိုးပေးလိုက်ပါ */
   margin-bottom: 20px;
-  border-radius: 8px;
+  border-radius: 12px;
+  background: #0a0a0a; /* နောက်ခံအရောင် နည်းနည်းထည့်ရင် ပိုလှပါတယ် */
 }
 
 .username-text {
@@ -141,28 +141,32 @@ body {
 }
 
 /* ---------- COMMENT INPUT ROW ---------- */
-
 .comment-input-row {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  align-items: center; /* အလယ်ဗဟို ညှိတယ် */
+  gap: 10px; /* စာရိုက်တဲ့ box နဲ့ send ခလုတ်ကြား အကွာအဝေး */
+  margin-top: 10px;
+  background: #111; /* နည်းနည်းရောင်ခြယ်ပေးရင် ပိုမိုက်ပါတယ် */
+  padding: 5px;
+  border-radius: 5px;
 }
 
 .reply-input {
-  flex: 1;
+  flex: 1; /* ကျန်တဲ့ နေရာအကုန်ယူတယ် */
   background: transparent;
-  border: 1px solid #555;
+  border: none; /* Border အပိုတွေ ဖျက်မယ် */
   color: #fff;
-  padding: 5px;
-  font-family: inherit;
+  padding: 8px;
+  outline: none;
 }
 
 .send-btn {
-  background: none;
+  background: #333;
+  color: #fff;
   border: none;
-  color: #8be9fd;
+  padding: 5px 15px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
 }
 
 /* ---------- POST ACTIONS ---------- */

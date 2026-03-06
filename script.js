@@ -157,9 +157,13 @@ const postComments=comments
 ? comments.filter(c=>String(c.post_id)===String(p.id))
 : [];
 
-const timeColor = p.updated_at!==p.created_at
-? "#ff9d00"
-: "#00ff00";
+// Fixed logic: timestamp တွေကို milliseconds အဖြစ်ပြောင်းပြီး စစ်ဆေးခြင်း
+const created = new Date(p.created_at).getTime();
+const updated = new Date(p.updated_at).getTime();
+
+// 2 စက္ကန့် (2000ms) ထက်ပိုကွာမှသာ Modified (လိမ္မော်) ဖြစ်တယ်လို့ သတ်မှတ်မယ်
+const timeColor = (updated - created > 5
+000) ? "#ff9d00" : "#00ff00";
 
 return`
 
