@@ -1,9 +1,7 @@
 /*1. FONTS & RESET*/
-@font-face { font-family:'sanpya'; src:url('sanpya.ttf'); }
 @font-face { font-family:'parabaik'; src:url('parabaik.ttf'); }
 @font-face { font-family:'badsignal'; src:url('badsignal.otf'); }
 @font-face { font-family:'jetbrains'; src:url('jetbrains.ttf'); }
-@font-face { font-family:'thuriya'; src:url('thuriya.ttf'); }
 
 * { box-sizing: border-box; }
 

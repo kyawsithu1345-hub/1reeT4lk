@@ -12,31 +12,45 @@ if(!myUser){
 }
 
 /* 3.ALLOWED FONTS  */
-const allowedFonts = ["sanpya","parabaik","badsignal","jetbrains","thuriya"];
+const allowedFonts = ["parabaik","badsignal","jetbrains"];
 
-/* 4.FORMAT POST  */
-function formatPost(text){
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  let output = text.replace(urlRegex, (url) => {
-    return `<a href="${url}" target="_blank" style="color:#8be9fd;">${url}</a>`;
-  });
+/* 4.FORMAT POST - MULTI-LAYER NESTED VERSION */
+function formatPost(text) {
+    if (!text) return "";
 
-  output = output
-    .replace(/\n/g,"<br>")
-    .replace(/<b>(.*?)<\/b>/g,"<b>$1</b>")
-    .replace(/<i>(.*?)<\/i>/g,"<i>$1</i>")
-    .replace(/<u>(.*?)<\/u>/g,"<u>$1</u>")
-    .replace(/<s=([0-9.]+)>(.*?)<\/s>/g,'<span style="font-size:$1em">$2</span>')
-    .replace(/<c=#([A-Fa-f0-9]{6})>(.*?)<\/c>/g,'<span style="color:#$1">$2</span>')
-    .replace(/<f=([a-zA-Z0-9_-]+)>(.*?)<\/f>/g,(m,f,c)=>allowedFonts.includes(f)?`<span style="font-family:${f}">${c}</span>`:c);
+    // ၁။ HTML Injection ကာကွယ်မယ်
+    let output = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
 
-  if(typeof DOMPurify !== "undefined"){
-    return DOMPurify.sanitize(output,{
-      ALLOWED_TAGS:['b','i','u','span','br','a'],
-      ALLOWED_ATTR:['style','href','target']
-    });
-  }
-  return output;
+    // ၂။ URL Link
+    const urlRegex = /(https?:\/\/[^\s\[\]<"']+)/g;
+    output = output.replace(urlRegex, '<a href="$1" target="_blank" style="color:#8be9fd; text-decoration:underline;">$1</a>');
+
+    // ၃။ Custom Syntax [ ] Tags - ၅ မျိုးစလုံးကို နှစ်ထပ်သုံးထပ်အတွက် Loop ပတ်မယ်
+    // ဒီ loop က အထပ်ထပ်ဖြစ်နေတဲ့ Tag တွေကို တစ်လွှာချင်းစီ ခွာပြီး HTML ပြောင်းပေးမှာပါ
+    for (let i = 0; i < 3; i++) {
+        // Bold: [b]
+        output = output.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<b>$1</b>');
+        
+        // Underline: [u]
+        output = output.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>');
+        
+        // Italic: [i]
+        output = output.replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<i>$1</i>');
+        
+        // Size:
+        output = output.replace(/\[s=([0-9.]+)\]([\s\S]*?)\[\/s\]/gi, '<span style="font-size:$1em">$2</span>');
+        
+        // Color:
+        output = output.replace(/\[c=#([A-Fa-f0-9]{6})\]([\s\S]*?)\[\/c\]/gi, '<span style="color:#$1">$2</span>');
+    }
+
+    // ၄။ Line breaks
+    output = output.replace(/\n/g, "<br>");
+
+    return output;
 }
 
 /* 5.READ MORE */
