@@ -1,32 +1,17 @@
-@font-face {
-  font-family: 'sanpya';
-  src: url('sanpya.ttf');
-}
+/*1. FONTS & RESET*/
+@font-face { font-family:'sanpya'; src:url('sanpya.ttf'); }
+@font-face { font-family:'parabaik'; src:url('parabaik.ttf'); }
+@font-face { font-family:'badsignal'; src:url('badsignal.otf'); }
+@font-face { font-family:'jetbrains'; src:url('jetbrains.ttf'); }
+@font-face { font-family:'thuriya'; src:url('thuriya.ttf'); }
 
-@font-face {
-  font-family: 'parabaik';
-  src: url('parabaik.ttf');
-}
-
-@font-face {
-  font-family: 'badsignal';
-  src: url('badsignal.otf');
-}
-
-@font-face {
-  font-family: 'jetbrains';
-  src: url('jetbrains.ttf');
-}
-
-@font-face {
-  font-family: 'thuriya';
-  src: url('thuriya.ttf');
-}
+* { box-sizing: border-box; }
 
 body {
-  background: #000;
+  background: #000 !important;
   color: #fff;
-  font-family: 'parabaik', sans-serif;
+  /* English အတွက် jetbrains ကို အရှေ့ကထားပြီး မြန်မာအတွက် parabaik ကို ဒုတိယထားပါသည် */
+  font-family: 'jetbrains', 'parabaik', sans-serif;
   padding: 20px;
   margin: 0;
   display: flex;
@@ -38,8 +23,7 @@ body {
   max-width: 500px;
 }
 
-/* ---------- Header with Color (Clean & Safe) ---------- */
-
+/*2. HEADER & RELOAD BUTTON*/
 .main-header {
   display: flex;
   justify-content: space-between;
@@ -49,223 +33,128 @@ body {
 }
 
 .logo {
-  font-family: 'badsignal', sans-serif;
+  font-family: 'badsignal', sans-serif !important;
   font-size: 32px;
-  color: #ff9d00 !important;
+  color: #ff9d00;
 }
 
-.header-menu button {
-  background: none;
-  border: none;
-  color: #00ff00;
+/* Reload, Submit ကဲ့သို့ Button များအားလုံးအတွက် */
+button, .reload-btn, .send-btn, #submit-btn {
+  font-family: 'jetbrains', sans-serif !important;
+  background: #111 !important;
+  color: #fff !important;
+  border: 1px solid #333 !important;
+  padding: 6px 12px;
   cursor: pointer;
-  font-size: 16px;
-  font-family: inherit;
-}
-
-/* Posts */
-.post-card {
-  border: 1px solid #333;
-  padding: 20px; /* Padding နည်းနည်းတိုးပေးလိုက်ပါ */
-  margin-bottom: 20px;
-  border-radius: 12px;
-  background: #0a0a0a; /* နောက်ခံအရောင် နည်းနည်းထည့်ရင် ပိုလှပါတယ် */
-}
-
-.username-text {
-  color: #8be9fd;
-  font-weight: bold;
-}
-
-.post-body {
-  margin-bottom: 10px;
-  line-height: 1.7;
-  word-break: break-word;
-}
-
-/* Form Styles */
-
-#post-text {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #333;
-  color: #fff;
-  padding: 10px;
-  box-sizing: border-box;
-  min-height: 80px;
-  font-family: inherit;
-}
-
-#submit-btn {
-  background: transparent;
-  border: 1px solid #8be9fd;
-  color: #8be9fd;
-  margin: 10px 0;
-  cursor: pointer;
-  padding: 8px 20px;
-  width: 100%;
-  font-family: inherit;
-}
-
-/* Comments */
-
-.comment-section {
-  margin-top: 10px;
-  border-top: 1px solid #333;
-  padding-top: 10px;
-}
-
-.comment-input {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #555;
-  color: #fff;
-  padding: 5px;
-  margin-top: 10px;
-  font-family: inherit;
-}
-
-.actions-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 5px;
-}
-
-.btn-small {
-  background: transparent;
-  border: 1px solid #555;
-  color: #fff;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-/* ---------- COMMENT INPUT ROW ---------- */
-.comment-input-row {
-  display: flex;
-  align-items: center; /* အလယ်ဗဟို ညှိတယ် */
-  gap: 10px; /* စာရိုက်တဲ့ box နဲ့ send ခလုတ်ကြား အကွာအဝေး */
-  margin-top: 10px;
-  background: #111; /* နည်းနည်းရောင်ခြယ်ပေးရင် ပိုမိုက်ပါတယ် */
-  padding: 5px;
-  border-radius: 5px;
-}
-
-.reply-input {
-  flex: 1; /* ကျန်တဲ့ နေရာအကုန်ယူတယ် */
-  background: transparent;
-  border: none; /* Border အပိုတွေ ဖျက်မယ် */
-  color: #fff;
-  padding: 8px;
-  outline: none;
-}
-
-.send-btn {
-  background: #333;
-  color: #fff;
-  border: none;
-  padding: 5px 15px;
   border-radius: 4px;
-  cursor: pointer;
 }
 
-/* ---------- POST ACTIONS ---------- */
-
-.post-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
-}
-
-.comment-toggle {
-  cursor: pointer;
-  color: #aaa;
-  font-size: 13px;
-}
-
-.save-btn {
-  cursor: pointer;
-  color: #aaa;
-  font-size: 13px;
-}
-
-/* Welcome Page Styles */
-
-.hero {
-  text-align: center;
-  margin: 40px 0;
-}
-
-.hero h1 {
-  font-size: 3rem;
-  color: #8be9fd;
-}
-
+/*3. HOME PAGE (INDEX.HTML)*/
 .features-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
-  margin-bottom: 30px;
+  margin: 20px 0;
 }
 
-.disclaimer {
-  background: #111;
+.feat-card {
+  border: 1px solid #333;
   padding: 15px;
-  border-left: 2px solid #555;
-  margin: 20px 0;
+  border-radius: 8px;
+  background: #0a0a0a;
 }
 
 .enter-btn {
   display: block;
+  border: 1px solid #ff9d00;
+  padding: 15px;
   text-align: center;
-  border: 1px solid #8be9fd;
-  color: #8be9fd;
-  padding: 10px;
-  text-decoration: none;
-}
-
-a {
-  text-decoration: none !important;
-}
-
-/* ---------- POST TIME ---------- */
-
-.post-time {
-  font-size: 12px;
-  margin-left: 5px;
-}
-
-.time-green {
-  color: #00ff00;
-}
-
-.time-orange {
   color: #ff9d00;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-top: 20px;
+  font-weight: bold;
 }
 
-/* ---------- READ MORE SMOOTH EXPAND ---------- */
-.post-body.collapsed{
-display:-webkit-box;
--webkit-line-clamp:2;
--webkit-box-orient:vertical;
-overflow:hidden;
+/*4. POST CARD & READ MORE LOGIC*/
+.post-card {
+  border: 1px solid #333;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 12px;
+  background: #0a0a0a;
+}
+
+.username-text { 
+  font-family: 'jetbrains', sans-serif;
+  color: #8be9fd; 
+  font-weight: bold; 
+}
+
+.post-body { 
+  margin: 10px 0; 
+  line-height: 1.7; 
+  word-break: break-word; 
+  font-family: 'jetbrains', 'parabaik', sans-serif;
+}
+
+/* စာကို ၂ တန်းပဲ ဖြတ်ပြမည့် အပိုင်း (Read More အတွက်) */
+.post-body.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* ဤနေရာတွင် စာ ၂ တန်းဟု သတ်မှတ်သည် */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .post-body.expanded {
-  max-height: 1000px;
+  display: block;
 }
 
 .read-more-btn {
+  font-family: 'jetbrains', sans-serif;
   font-size: 12px;
   color: #8be9fd;
   cursor: pointer;
-  user-select: none;
 }
 
-.reply-input{
-border:none;
-background:transparent;
-outline:none;
-color:#fff;
-width:100%;
+/*5. INPUTS & TEXTAREA*/
+input, textarea, .comment-input, #post-text {
+  font-family: 'jetbrains', 'parabaik', sans-serif;
+  background: #000 !important;
+  color: #fff !important;
+  border: 1px solid #333 !important;
+  padding: 10px;
+  width: 100%;
 }
+
+#post-text {
+  height: 80px;
+  margin-top: 0; /* အပေါ်သို့ ကပ်ရန် */
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+/*6. ACTION BAR & TIME*/
+.action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.post-time {
+  font-family: 'jetbrains', sans-serif;
+  font-size: 11px;
+}
+
+.comment-toggle, .save-btn {
+  font-family: 'jetbrains', sans-serif;
+  cursor: pointer;
+  font-size: 13px;
+  color: #aaa;
+}
+
+/*7. MISC*/
+.time-green { color: #00ff00; }
+.time-orange { color: #ff9d00; }
+a { text-decoration: none !important; color: #8be9fd; }

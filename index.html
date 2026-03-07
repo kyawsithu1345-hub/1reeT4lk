@@ -4,7 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1reeT4lk</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 1. Fonts Loading */
+        @font-face { font-family:'jetbrains'; src:url('jetbrains.ttf'); }
+        @font-face { font-family:'badsignal'; src:url('badsignal.otf'); }
+
+        /* 2. Global Styles */
+        body {
+            background: #000;
+            color: #fff;
+            /* Jetbrains font ကို တစ်ကိုယ်လုံးအတွက် သုံးထားပါတယ် */
+            font-family: 'jetbrains', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #welcome-page {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* 3. Logo Styles */
+        .logo {
+            font-family: 'badsignal', sans-serif;
+            color: #ff9d00;
+            font-size: 40px; /* အရွယ်အစား နည်းနည်း ထပ်ကြီးပေးထားပါတယ် */
+            margin-bottom: 5px;
+        }
+
+        .hero p {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 0;
+        }
+
+        /* 4. Two Box Layout (Anonymous & Transient) */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .feat-card {
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            background: #0a0a0a;
+        }
+
+        .feat-card h3 {
+            margin-top: 0;
+            color: #8be9fd;
+            font-size: 16px;
+        }
+
+        .feat-card p {
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 0;
+        }
+
+        /* 5. Usage Policy */
+        .disclaimer {
+            margin-top: 20px;
+            padding: 10px;
+            border-left: 2px solid #333;
+        }
+
+        .disclaimer h3 {
+            font-size: 14px;
+            margin: 0 0 5px 0;
+        }
+
+        .disclaimer p {
+            font-size: 12px;
+            color: #888;
+            margin: 0;
+        }
+
+        /* 6. Enter App Button Box */
+        .enter-btn {
+            display: block;
+            border: 1px solid #ff9d00;
+            padding: 15px;
+            text-align: center;
+            color: #ff9d00;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .enter-btn:hover {
+            background: #ff9d00;
+            color: #000;
+        }
+    </style>
 </head>
 <body>
     <div id="welcome-page">
