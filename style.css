@@ -39,7 +39,7 @@ body {
 /* Reload, Submit ကဲ့သို့ Button များအားလုံးအတွက် */
 button, .reload-btn, .send-btn, #submit-btn {
   font-family: 'jetbrains', sans-serif !important;
-  background: #111 !important;
+  background: #0a0a0a !important;
   color: #fff !important;
   border: 1px solid #333 !important;
   padding: 6px 12px;
@@ -85,7 +85,7 @@ button, .reload-btn, .send-btn, #submit-btn {
 
 .username-text { 
   font-family: 'jetbrains', sans-serif;
-  color: #8be9fd; 
+  color: #f1fa8c; 
   font-weight: bold; 
 }
 
@@ -156,3 +156,18 @@ input, textarea, .comment-input, #post-text {
 .time-green { color: #00ff00; }
 .time-orange { color: #ff9d00; }
 a { text-decoration: none !important; color: #8be9fd; }
+
+/* 8.Custom Link */
+.custom-link {
+    color: #70a1ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 500;
+    transition: color 0.3s;
+    /* icon မပါတော့တဲ့အတွက် gap နဲ့ inline-flex မလိုတော့ပါ */
+}
+
+.custom-link:hover {
+    color: #50fa7b;
+    text-decoration-thickness: 2px;
+}

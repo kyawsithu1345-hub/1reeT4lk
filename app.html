@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1reeT4lk - App</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body onload="loadPosts()">
+<body>
     <div id="app-container">
         <header class="main-header">
             <div class="logo">1reeT4lk</div>
+            <div id="headerStatus" onclick="toggleMusic()" style="cursor: pointer; font-size: 0.8em; margin-left: 10px;">
+                ⚪
+            </div>
             <nav class="header-menu">
                 <button onclick="window.location.reload()">Reload</button>
             </nav>
@@ -25,6 +27,9 @@
 
         <div id="feed"></div>
     </div>
+
+    <script src="array.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
