@@ -1,10 +1,6 @@
 /* array.js */
 let playlist = [
     { 
-        name: "NiExshadow - If I Live Without You", 
-        url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/NiExshadow%20-%20If%20I%20Live%20Without%20You.mp3" 
-    },
-    { 
         name: "Alan Walker x Benjamin Ingrosso - Man On The Moon", 
         url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/Alan%20Walker%20x%20Benjamin%20Ingrosso%20-%20Man%20On%20The%20Moon%20(Official%20Music%20Video).mp3" 
     },
@@ -19,5 +15,17 @@ let playlist = [
     { 
         name: "Elara Vea - Whispers of the Sky", 
         url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/Elara%20Vea%20-%20Whispers%20of%20the%20Sky%20(Official%20Music%20Video).mp3" 
-    }
+    },
+    {
+        name: "Halsey - Without Me",
+        url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/Halsey%20-%20Without%20Me.mp3"
+    }, // <-- ဒီနေရာမှာ Comma လိုပါတယ်
+    { 
+        name: "NiExshadow - If I Live Without You", 
+        url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/NiExshadow%20-%20If%20I%20Live%20Without%20You.mp3" 
+    },
+    { 
+        name: "NiExshadow - You Will Never Stay Forever", // <-- name ရှေ့က comma ဖြုတ်လိုက်ပါပြီ
+        url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/NiExshadow%20-%20You%20Will%20Never%20Stay%20Forever.mp3"
+    },
 ];

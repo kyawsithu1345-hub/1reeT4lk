@@ -4,7 +4,7 @@ const _supabase = window.supabase.createClient(
     "sb_publishable_J9NfYlWjgioW_xTDEhCWrg_kQe6kCil"
 );
 
-// 2. MUSIC PLAYER SETTINGS (Playlist & Logic)
+/* 2. MUSIC PLAYER SETTINGS (Playlist & Logic) */
 let currentTrackIndex = 0;
 let isPlaying = false;
 let audio = new Audio(); 
@@ -17,20 +17,53 @@ function updateMusicUI() { }
 
 function toggleMusic() {
     if (audio.paused) {
-        audio.play().then(() => { isPlaying = true; }).catch(e => console.error(e));
+        audio.play().then(() => { 
+            isPlaying = true; 
+            
+            // [ADD-START] Notification မှာ သီချင်းနာမည်ပေါ်ရန်
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: playlist[currentTrackIndex].name,
+                    artist: "1reeT4lk Player",
+                    artwork: [{ src: 'https://cdn-icons-png.flaticon.com/512/3844/3844724.png', sizes: '512x512', type: 'image/png' }]
+                });
+            }
+            // [ADD-END]
+            
+        }).catch(e => console.error(e));
     } else {
-        audio.pause(); isPlaying = false;
+        audio.pause(); 
+        isPlaying = false;
     }
 }
 
 function playNext() {
     if (playlist.length > 1) {
         let nextIndex;
-        do { nextIndex = Math.floor(Math.random() * playlist.length); } while (nextIndex === currentTrackIndex);
+        do { 
+            nextIndex = Math.floor(Math.random() * playlist.length); 
+        } while (nextIndex === currentTrackIndex);
         currentTrackIndex = nextIndex;
     }
+    
     audio.src = playlist[currentTrackIndex].url;
     audio.load();
+
+    // [ADD-START] Next လုပ်တဲ့အခါ Notification ပါ လိုက်ပြောင်းရန်
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: playlist[currentTrackIndex].name,
+            artist: "1reeT4lk Player",
+            artwork: [{ src: 'https://cdn-icons-png.flaticon.com/512/3844/3844724.png', sizes: '512x512', type: 'image/png' }]
+        });
+        
+        // Notification Bar က ခလုတ်တွေ အလုပ်လုပ်စေရန် (Optional)
+        navigator.mediaSession.setActionHandler('play', () => toggleMusic());
+        navigator.mediaSession.setActionHandler('pause', () => toggleMusic());
+        navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
+    }
+    // [ADD-END]
+
     audio.play().then(() => { isPlaying = true; }).catch(e => console.error(e));
 }
 
@@ -70,10 +103,15 @@ if (!myUser) {
     sessionStorage.setItem("username", myUser);
 }
 
-/* 4. FORMAT POST FUNCTION */
+/* 4.1.ALLOWED FONTS  */
+const allowedFonts = ["badsignal"];
+
+/* 4.2 FORMAT POST FUNCTION */
+/*Text*/
 function formatPost(text) {
     if (!text) return "";
     let output = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+/*URL AND LABLE*/
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     output = output.replace(urlRegex, (url) => {
         let label = url;
@@ -93,12 +131,14 @@ function formatPost(text) {
             return `<a href="${url}" target="_blank" class="custom-link">${label}</a>`;
         } catch (e) { return `<a href="${url}" target="_blank" class="custom-link">${url}</a>`; }
     });
+    //HTML EFFECT 
     for (let i = 0; i < 3; i++) {
         output = output.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<b>$1</b>');
         output = output.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>');
         output = output.replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<i>$1</i>');
         output = output.replace(/\[s=([0-9.]+)\]([\s\S]*?)\[\/s\]/gi, '<span style="font-size:$1em">$2</span>');
         output = output.replace(/\[c=#([A-Fa-f0-9]{6})\]([\s\S]*?)\[\/c\]/gi, '<span style="color:#$1">$2</span>');
+        output = output.replace(/\[f=([a-zA-Z0-9]+)\]([\s\S]*?)\[\/f\]/gi, '<span style="font-family:\'$1\'">$2</span>');
     }
     return output.replace(/\n/g, "<br>");
 }
