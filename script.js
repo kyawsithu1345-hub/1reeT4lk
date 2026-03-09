@@ -111,7 +111,8 @@ const allowedFonts = ["badsignal"];
 function formatPost(text) {
     if (!text) return "";
     let output = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-/*URL AND LABLE*/
+
+    /* URL AND LABEL */
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     output = output.replace(urlRegex, (url) => {
         let label = url;
@@ -131,15 +132,30 @@ function formatPost(text) {
             return `<a href="${url}" target="_blank" class="custom-link">${label}</a>`;
         } catch (e) { return `<a href="${url}" target="_blank" class="custom-link">${url}</a>`; }
     });
-    //HTML EFFECT 
+
+    // HTML EFFECT (သေချာအောင် loop ထဲမှာပဲ ပေါင်းထည့်ထားပေးတယ်)
     for (let i = 0; i < 3; i++) {
         output = output.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<b>$1</b>');
         output = output.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>');
         output = output.replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<i>$1</i>');
         output = output.replace(/\[s=([0-9.]+)\]([\s\S]*?)\[\/s\]/gi, '<span style="font-size:$1em">$2</span>');
-        output = output.replace(/\[c=#([A-Fa-f0-9]{6})\]([\s\S]*?)\[\/c\]/gi, '<span style="color:#$1">$2</span>');
-        output = output.replace(/\[f=([a-zA-Z0-9]+)\]([\s\S]*?)\[\/f\]/gi, '<span style="font-family:\'$1\'">$2</span>');
+        
+        // ပြင်ထားတဲ့ Color & Easter Eggs Section
+        output = output.replace(/\[c=([\w#]+)\]([\s\S]*?)\[\/c\]/gi, (match, color, content) => {
+            const effect = color.toLowerCase();
+            if (effect === 'rainbow') return `<span class="rainbow">${content}</span>`;
+            if (effect === 'glow') return `<span class="glow">${content}</span>`;
+            
+            // Hex code ဆိုရင် ရှေ့မှာ # ပါမပါ စစ်ပြီး ထည့်ပေးမယ်
+            let finalColor = color;
+            if (/^[A-Fa-f0-9]{3,6}$/.test(finalColor)) finalColor = '#' + finalColor;
+            
+            return `<span style="color:${finalColor}">${content}</span>`;
+        });
+
+        output = output.replace(/\[f=([a-zA-Z0-9 ]+)\]([\s\S]*?)\[\/f\]/gi, '<span style="font-family:\'$1\'">$2</span>');
     }
+    
     return output.replace(/\n/g, "<br>");
 }
 
