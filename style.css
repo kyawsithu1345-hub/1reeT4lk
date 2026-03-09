@@ -74,6 +74,20 @@ button, .reload-btn, .send-btn, #submit-btn {
   font-weight: bold;
 }
 
+/* ရက်စွဲအတွက် (ဥပမာ- 09-03-26) */
+.status-date {
+    color: #00adb5; /* မိမိကြိုက်သက်ရာအရောင်ပြောင်းနိုင်သည် */
+    font-weight: bold;
+    display: block;
+}
+
+/* နေ့ရက်အတွက် (ဥပမာ- Monday) */
+.status-day {
+    color: #00ff00; /* မိမိကြိုက်သက်ရာအရောင်ပြောင်းနိုင်သည် */
+    letter-spacing: 1px;
+    display: block;
+}
+
 /*4. POST CARD & READ MORE LOGIC*/
 .post-card {
   border: 1px solid #333;
@@ -152,20 +166,28 @@ input, textarea, .comment-input, #post-text {
   color: #aaa;
 }
 
-/*7. MISC*/
-.time-green { color: #00ff00; }
-.time-orange { color: #ff9d00; }
-a { text-decoration: none !important; color: #8be9fd; }
+/* 7. TIME STATUS COLORS */
+/* 7. TIME STATUS COLORS
+.time-green { color: #50fa7b !important; font-weight: bold; }
+.time-orange { color: #ffb86c !important;opacity: 0.7;  }*/
+.time-status { color: #8be9fd !important; }
 
 /* 8.Custom Link */
+/*italic*/
 .custom-link {
+    color: #ff0000;
+    font-style: italic;
+    font-weight: 600;    /* စာလုံးကို အသားနည်းနည်း ပိုထူထားတာ */
+    text-decoration: none; 
+    font-size: 0.9em;    /* စာလုံးအရွယ်အစားကို ပတ်ဝန်းကျင်စာသားထက် နည်းနည်းသေးထားတာ (ဒါမှမဟုတ် 14px လို့ သတ်မှတ်နိုင်တယ်) */
+}
+/*.custom-link {
     color: #70a1ff;
     text-decoration: underline;
     text-underline-offset: 3px;
     font-weight: 500;
     transition: color 0.3s;
-    /* icon မပါတော့တဲ့အတွက် gap နဲ့ inline-flex မလိုတော့ပါ */
-}
+}*/
 
 .custom-link:hover {
     color: #50fa7b;

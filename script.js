@@ -5,7 +5,6 @@ const _supabase = window.supabase.createClient(
 );
 
 // 2. MUSIC PLAYER SETTINGS (Playlist & Logic)
-
 let currentTrackIndex = 0;
 let isPlaying = false;
 let audio = new Audio(); 
@@ -14,30 +13,13 @@ if (typeof playlist !== 'undefined' && playlist.length > 0) {
     audio.src = playlist[currentTrackIndex].url;
 }
 
-function updateMusicUI() {
-    const statusEl = document.getElementById("headerStatus");
-    const postInput = document.getElementById("post-text");
-    const currentSong = playlist[currentTrackIndex];
-
-    // Header မှာ 🟢/🔴 Status လေးပဲ ပြတော့မယ် (နာမည်မပါတော့ဘူး)
-    if (statusEl) {
-        statusEl.style.color = isPlaying ? '#00ff00' : '#ff0000';
-        statusEl.innerText = isPlaying ? "🟢" : "🔴";
-    }
-
-    // Placeholder ထဲမှာပဲ သီချင်းနာမည်နဲ့ အချိန်ကို ရှင်းရှင်းလေးပြမယ်
-    if (postInput && postInput.value.trim() === "") {
-        const fmt = (s) => (isNaN(s) || !isFinite(s)) ? "0:00" : `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
-        postInput.placeholder = `${currentSong.name}\n` + 
-                       `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
-    }
-}
+function updateMusicUI() { }
 
 function toggleMusic() {
     if (audio.paused) {
-        audio.play().then(() => { isPlaying = true; updateMusicUI(); }).catch(e => console.error(e));
+        audio.play().then(() => { isPlaying = true; }).catch(e => console.error(e));
     } else {
-        audio.pause(); isPlaying = false; updateMusicUI();
+        audio.pause(); isPlaying = false;
     }
 }
 
@@ -49,23 +31,37 @@ function playNext() {
     }
     audio.src = playlist[currentTrackIndex].url;
     audio.load();
-    audio.play().then(() => { isPlaying = true; updateMusicUI(); }).catch(e => console.error(e));
+    audio.play().then(() => { isPlaying = true; }).catch(e => console.error(e));
 }
 
-audio.ontimeupdate = updateMusicUI;
 audio.onended = () => playNext();
 
-// Command Listener (#next, #play, #pause ပဲ ကျန်တော့မယ်)
 document.getElementById("post-text")?.addEventListener("input", function(e) {
     const cmd = e.target.value.trim().toLowerCase();
-    if (cmd === "#next") {
+    if (cmd === "@next") {
         playNext();
         e.target.value = "";
-    } else if (cmd === "#play" || cmd === "#pause") {
+    } else if (cmd === "@play" || cmd === "@pause") {
         toggleMusic();
         e.target.value = "";
     }
 });
+
+function updateHeaderInfo() {
+    const statusEl = document.getElementById("headerStatus");
+    if (!statusEl) return;
+    const now = new Date();
+    const dateOptions = { day: '2-digit', month: '2-digit', year: '2-digit' };
+    const dateStr = now.toLocaleDateString('en-GB', dateOptions).replace(/\//g, '-');
+    const dayOptions = { weekday: 'long' };
+    const dayStr = now.toLocaleDateString('en-GB', dayOptions);
+    statusEl.innerHTML = `
+        <span class="status-date">${dateStr}</span>
+        <span class="status-day">${dayStr}</span>
+    `;
+}
+setInterval(updateHeaderInfo, 1000);
+updateHeaderInfo();
 
 /* 3. USER SESSION MANAGEMENT */
 let myUser = sessionStorage.getItem('username');
@@ -74,11 +70,10 @@ if (!myUser) {
     sessionStorage.setItem("username", myUser);
 }
 
-/* 4. FORMAT POST FUNCTION (Links & Formatting) */
+/* 4. FORMAT POST FUNCTION */
 function formatPost(text) {
     if (!text) return "";
     let output = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     output = output.replace(urlRegex, (url) => {
         let label = url;
@@ -98,7 +93,6 @@ function formatPost(text) {
             return `<a href="${url}" target="_blank" class="custom-link">${label}</a>`;
         } catch (e) { return `<a href="${url}" target="_blank" class="custom-link">${url}</a>`; }
     });
-
     for (let i = 0; i < 3; i++) {
         output = output.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<b>$1</b>');
         output = output.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>');
@@ -116,13 +110,17 @@ function timeAgo(dateString) {
     const diffMs = now - past;
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMs < 60000) return "Just now";
-    if (diffDays === 0) return past.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    if (diffDays === 1) return "Yesterday";
-    return diffDays + " days ago";
+    let timeText = "";
+    if (diffMs < 60000) timeText = "Just now";
+    else if (diffDays === 0) timeText = past.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    else if (diffDays === 1) timeText = "Yesterday";
+    else timeText = diffDays + " days ago";
+
+    // အားလုံးကို အပြာနုရောင် class တစ်ခုတည်း သုံးထားပါတယ်
+    return `<span class="time-status">${timeText}</span>`;
 }
 
-/* 6. UI ACTIONS (Toggles & Save) */
+/* 6. UI ACTIONS */
 function toggleReadMore(id) {
     const body = document.getElementById("body-" + id);
     const btn = document.getElementById("rm-" + id);
@@ -154,16 +152,14 @@ function savePost(user, time, text) {
     a.click();
 }
 
-/* 7. SUBMIT POST (Support Hacker Commands) */
+/* 7. SUBMIT POST */
 async function submitPost() {
     const textarea = document.getElementById("post-text");
     if (!textarea) return;
     const rawText = textarea.value.trim();
     const cmd = rawText.toUpperCase();
-
     if (!rawText) return;
 
-    // Commands - Case Sensitive မဖြစ်အောင် လုပ်ထားပါတယ်
     if (cmd === "#N3XT") { playNext(); textarea.value = ""; return; }
     if (cmd === "#P4US3" || cmd === "#PL4Y") { toggleMusic(); textarea.value = ""; return; }
     if (cmd === "#CL34R") { textarea.value = ""; return; }
@@ -176,30 +172,15 @@ async function submitPost() {
         last_activity: now
     }]);
 
-    if (error) {
-        console.error("Insert Error:", error);
-    } else {
-        textarea.value = "";
-        loadPosts();
-    }
+    if (error) console.error("Insert Error:", error);
+    else { textarea.value = ""; loadPosts(); }
 }
 
 /* 8. LOAD POSTS & COMMENTS */
-async function addComment(postId) {
-    const input = document.getElementById("in-" + postId);
-    const text = input.value.trim();
-    if (!text) return;
-    const now = new Date().toISOString();
-    await _supabase.from("comments").insert([{ post_id: postId, username: myUser, body: text, created_at: now }]);
-    await _supabase.from("posts").update({ last_activity: now }).eq("id", postId);
-    loadPosts();
-}
-
 async function loadPosts() {
     const feed = document.getElementById("feed");
     if (!feed) return;
 
-    // ၁၄ ရက်ကျော်တာတွေကို အလိုအလျောက် ဖြတ်မယ်
     const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
     await _supabase.from("posts").delete().lt("last_activity", fourteenDaysAgo.toISOString());
 
@@ -211,20 +192,20 @@ async function loadPosts() {
 
     posts.forEach(p => {
         const postComments = comments ? comments.filter(c => String(c.post_id) === String(p.id)) : [];
-        const displayTime = timeAgo(p.created_at);
+        const timeHTML = timeAgo(p.created_at);
 
         feed.innerHTML += `
             <div class="post-card">
                 <div>
                     <span class="username-text">${p.username}</span>
-                    <span class="post-time ${p.updated_at ? 'time-orange':'time-green'}">| ${displayTime}</span>
+                    <span class="post-time">| ${timeHTML}</span>
                 </div>
                 <div id="body-${p.id}" class="post-body collapsed">${formatPost(p.body)}</div>
                 <div><span id="rm-${p.id}" class="read-more-btn" onclick="toggleReadMore('${p.id}')" style="display:none">Read more...</span></div>
                 <div class="post-actions">
                     <div class="action-row">
                         <div class="action-left"><span class="comment-toggle" onclick="toggleComments('${p.id}')">${postComments.length} comments</span></div>
-                        <div class="action-right"><span class="save-btn" onclick="savePost('${p.username}','${displayTime}',\`${p.body.replace(/`/g, "\\`")}\`)">save</span></div>
+                        <div class="action-right"><span class="save-btn" onclick="savePost('${p.username}','Time', \`${p.body.replace(/`/g, "\\`")}\`)">save</span></div>
                     </div>
                 </div>
                 <div id="comments-container-${p.id}" class="comment-section" style="display:none">
@@ -235,6 +216,7 @@ async function loadPosts() {
                     </div>
                 </div>
             </div>`;
+        
         setTimeout(() => {
             const body = document.getElementById("body-" + p.id);
             const btn = document.getElementById("rm-" + p.id);
@@ -242,7 +224,7 @@ async function loadPosts() {
         }, 50);
     });
 }
-
+    
 /* 9. INITIALIZE */
 loadPosts();
 updateMusicUI();
