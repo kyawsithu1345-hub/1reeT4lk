@@ -96,11 +96,21 @@ function updateHeaderInfo() {
 setInterval(updateHeaderInfo, 1000);
 updateHeaderInfo();
 
-/* 3. USER SESSION MANAGEMENT */
+/* --- 3. USER SESSION MANAGEMENT --- */
 let myUser = sessionStorage.getItem('username');
 if (!myUser) {
     myUser = "User_" + Math.floor(100 + Math.random() * 900);
     sessionStorage.setItem("username", myUser);
+}
+
+// နာမည်ပေါ်မူတည်ပြီး ကာလာတစ်ခု အမြဲတမ်းထုတ်ပေးမယ့် function
+function getUsernameColor(username) {
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+        hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h = Math.abs(hash % 360); 
+    return `hsl(${h}, 70%, 80%)`; // ဖတ်ရလွယ်အောင် Brightness ကို 80% ထားထားတယ်
 }
 
 /* 4.1.ALLOWED FONTS  */
@@ -126,6 +136,7 @@ function formatPost(text) {
             else if (host.includes("twitter.com") || host.includes("x.com")) label = "• twitter";
             else if (host.includes("t.me")) label = "• telegram";
             else if (host.includes("pinterest.com") || host.includes("pin.it")) label = "• pinterest";
+            else if (host.includes("supabase.co")) label = "• supabase";
             else if (host.includes("drive.google.com")) label = "• google drive";
             else if (host.includes("docs.google.com")) label = "• google docs";
             else label = u.hostname.replace('www.', '');
@@ -232,14 +243,27 @@ async function submitPost() {
     else { textarea.value = ""; loadPosts(); }
 }
 
-/* 8. LOAD POSTS & COMMENTS */
+/* --- 1. USERNAME RANDOM COLOR FUNCTION --- */
+function getUsernameColor(username) {
+    if (!username) return "#f1fa8c"; // နာမည်မရှိရင် default အရောင်ပေးမယ်
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+        hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h = Math.abs(hash % 360); 
+    return `hsl(${h}, 70%, 80%)`; // ဖတ်ရလွယ်သော တောက်တောက်လေးဖြစ်ရန်
+}
+
+/* --- 8. LOAD POSTS & COMMENTS --- */
 async function loadPosts() {
     const feed = document.getElementById("feed");
     if (!feed) return;
 
+    // ၁၄ ရက်ထက်ကျော်သော post များကို ဖျက်ခြင်း
     const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
     await _supabase.from("posts").delete().lt("last_activity", fourteenDaysAgo.toISOString());
 
+    // Data ဆွဲယူခြင်း
     const { data: posts } = await _supabase.from("posts").select("*").order("last_activity", { ascending: false });
     const { data: comments } = await _supabase.from("comments").select("*");
 
@@ -247,32 +271,53 @@ async function loadPosts() {
     if (!posts) return;
 
     posts.forEach(p => {
+        // Comment တွက်ချက်ခြင်း နှင့် အချိန်ပြောင်းလဲခြင်း
         const postComments = comments ? comments.filter(c => String(c.post_id) === String(p.id)) : [];
         const timeHTML = timeAgo(p.created_at);
+        
+        // [အရေးကြီး] Username အရောင်ကို Loop ထဲမှာ ကြိုတင်တွက်ချက်ထားခြင်း
+        const userColor = getUsernameColor(p.username);
 
+        // HTML ထည့်သွင်းခြင်း
         feed.innerHTML += `
             <div class="post-card">
                 <div>
-                    <span class="username-text">${p.username}</span>
+                    <span class="username-text" style="color: ${userColor}">${p.username}</span>
                     <span class="post-time">| ${timeHTML}</span>
                 </div>
+                
                 <div id="body-${p.id}" class="post-body collapsed">${formatPost(p.body)}</div>
+                
                 <div><span id="rm-${p.id}" class="read-more-btn" onclick="toggleReadMore('${p.id}')" style="display:none">Read more...</span></div>
+                
                 <div class="post-actions">
                     <div class="action-row">
-                        <div class="action-left"><span class="comment-toggle" onclick="toggleComments('${p.id}')">${postComments.length} comments</span></div>
-                        <div class="action-right"><span class="save-btn" onclick="savePost('${p.username}','Time', \`${p.body.replace(/`/g, "\\`")}\`)">save</span></div>
+                        <div class="action-left">
+                            <span class="comment-toggle" onclick="toggleComments('${p.id}')">${postComments.length} comments</span>
+                        </div>
+                        <div class="action-right">
+                            <span class="save-btn" onclick="savePost('${p.username}','Time', \`${p.body.replace(/`/g, "\\`")}\`)">save</span>
+                        </div>
                     </div>
                 </div>
+
                 <div id="comments-container-${p.id}" class="comment-section" style="display:none">
-                    ${postComments.map(c => `<div class="comment-box"><small><span class="username-text">${c.username}</span>: ${formatPost(c.body)}</small></div>`).join("")}
+                    ${postComments.map(c => `
+                        <div class="comment-box">
+                            <small>
+                                <span class="username-text" style="color: ${getUsernameColor(c.username)}">${c.username}</span>: ${formatPost(c.body)}
+                            </small>
+                        </div>
+                    `).join("")}
+                    
                     <div class="comment-input-row">
                         <input type="text" id="in-${p.id}" class="comment-input" placeholder="Reply...">
                         <button class="send-btn" onclick="addComment('${p.id}')">Send</button>
                     </div>
                 </div>
-            </div>`;
-        
+            </div>`; // <--- JavaScript command ပိတ်ခြင်း
+
+        // Read More စစ်ဆေးခြင်း
         setTimeout(() => {
             const body = document.getElementById("body-" + p.id);
             const btn = document.getElementById("rm-" + p.id);
@@ -281,6 +326,6 @@ async function loadPosts() {
     });
 }
     
-/* 9. INITIALIZE */
+/* --- 9. INITIALIZE --- */
 loadPosts();
 updateMusicUI();

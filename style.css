@@ -1,7 +1,7 @@
 /*1. FONTS & RESET*/
 @font-face { font-family:'parabaik'; src:url('parabaik.ttf'); }
 @font-face { font-family:'badsignal'; src:url('badsignal.otf'); }
-@font-face { font-family:'jetbrains'; src:url('jetbrains.ttf'); }
+@font-face { font-family:'poppins.ttf'; src:url('poppins.ttf'); }
 
 * { box-sizing: border-box; }
 
@@ -9,7 +9,7 @@ body {
   background: #000 !important;
   color: #fff;
   /* English အတွက် jetbrains ကို အရှေ့ကထားပြီး မြန်မာအတွက် parabaik ကို ဒုတိယထားပါသည် */
-  font-family: 'jetbrains', 'parabaik', sans-serif;
+  font-family: 'poppins', 'parabaik', sans-serif;
   padding: 20px;
   margin: 0;
   display: flex;
@@ -31,14 +31,14 @@ body {
 }
 
 .logo {
-  font-family: 'badsignal', sans-serif !important;
+  font-family: 'poppins', sans-serif !important;
   font-size: 32px;
   color: #ff9d00;
 }
 
 /* Reload, Submit ကဲ့သို့ Button များအားလုံးအတွက် */
 button, .reload-btn, .send-btn, #submit-btn {
-  font-family: 'jetbrains', sans-serif !important;
+  font-family: 'poppins', sans-serif !important;
   background: #0a0a0a !important;
   color: #fff !important;
   border: 1px solid #333 !important;
@@ -98,8 +98,8 @@ button, .reload-btn, .send-btn, #submit-btn {
 }
 
 .username-text { 
-  font-family: 'jetbrains', sans-serif;
-  color: #f1fa8c; 
+  font-family: 'poppins', sans-serif;
+  /*color: #f1fa8c; */
   font-weight: bold; 
 }
 
@@ -107,7 +107,7 @@ button, .reload-btn, .send-btn, #submit-btn {
   margin: 10px 0; 
   line-height: 1.7; 
   word-break: break-word; 
-  font-family: 'jetbrains', 'parabaik', sans-serif;
+  font-family: 'poppins', 'parabaik', sans-serif;
 }
 
 /* စာကို ၂ တန်းပဲ ဖြတ်ပြမည့် အပိုင်း (Read More အတွက်) */
@@ -123,7 +123,7 @@ button, .reload-btn, .send-btn, #submit-btn {
 }
 
 .read-more-btn {
-  font-family: 'jetbrains', sans-serif;
+  font-family: 'poppins', sans-serif;
   font-size: 12px;
   color: #8be9fd;
   cursor: pointer;
@@ -131,7 +131,7 @@ button, .reload-btn, .send-btn, #submit-btn {
 
 /*5. INPUTS & TEXTAREA*/
 input, textarea, .comment-input, #post-text {
-  font-family: 'jetbrains', 'parabaik', sans-serif;
+  font-family: 'poppins', 'parabaik', sans-serif;
   background: #000 !important;
   color: #fff !important;
   border: 1px solid #333 !important;
@@ -155,12 +155,12 @@ input, textarea, .comment-input, #post-text {
 }
 
 .post-time {
-  font-family: 'jetbrains', sans-serif;
+  font-family: 'poppins', sans-serif;
   font-size: 11px;
 }
 
 .comment-toggle, .save-btn {
-  font-family: 'jetbrains', sans-serif;
+  font-family: 'poppin', sans-serif;
   cursor: pointer;
   font-size: 13px;
   color: #aaa;

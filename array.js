@@ -25,7 +25,7 @@ let playlist = [
         url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/NiExshadow%20-%20If%20I%20Live%20Without%20You.mp3" 
     },
     { 
-        name: "NiExshadow - You Will Never Stay Forever", // <-- name ရှေ့က comma ဖြုတ်လိုက်ပါပြီ
+        name: "NiExshadow - You Will Never Stay Forever",
         url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/NiExshadow%20-%20You%20Will%20Never%20Stay%20Forever.mp3"
     },
 ];
