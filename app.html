@@ -7,22 +7,25 @@
     
     <link rel="stylesheet" href="style.css">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div id="app-container">
         <header class="main-header">
         
-            <div class="logo">FREETALK</div>
+            <div class="logo">1reeT4lk</div>
             
-            <div id="headerStatus" style="font-size: 0.8em; color: #888; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;">
-    </div>
+            <div id="versionInfo" style="font-size: 0.8em; color: #8be9fd; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+    v-3.0.0
+</div>
                  
             <nav class="header-menu">
                 <button onclick="window.location.reload()">Reload</button>
             </nav>
         </header>
+        <div class="info-label">
+    Share your thoughts anonymously...
+</div>
 
         <textarea id="post-text" placeholder="Type message here..."></textarea>
         <button onclick="submitPost()" id="submit-btn">Send</button>

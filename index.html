@@ -3,131 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreeTalk</title>
+    <title>1reeT4lk</title>
     <style>
-        /* 1. Fonts Loading */
+        /* FONT LOADING*/
         @font-face { font-family:'poppins'; src:url('poppins.ttf'); }
 
-        /* 2. Global Styles */
+        /* GLOBAL STYLE*/
         body {
             background: #000;
-            color: #fff;
-            /* poppins font ကို တစ်ကိုယ်လုံးအတွက် သုံးထားပါတယ် */
+            color: ##f0f8ff;
             font-family: 'poppins', sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         #welcome-page {
             width: 100%;
             max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        /* 3. Logo Styles */
-        .logo {
-            font-family: 'poppins', sans-serif;
-            color: #ff9d00;
-            font-size: 32px; /* အရွယ်အစား နည်းနည်း ထပ်ကြီးပေးထားပါတယ် */
-            margin-bottom: 5px;
+        .head { text-align: center; }
+        .logo { 
+            color: #f0f8ff; 
+            font-size: 34px;
+            margin: 0;
         }
-
-        .hero p {
+        .head p {
             font-size: 14px;
-            color: #aaa;
-            margin-top: 0;
+            color: #8be9fd;
+            margin-top: 5px;
         }
-
-        /* 4. Two Box Layout (Anonymous & Transient) */
+        
+        /* TWO BOX LAYOUT*/
         .features-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin: 25px 0;
         }
-
+         
         .feat-card {
-            border: 1px solid #333;
+            border: 1px solid #2d3748;
             padding: 15px;
             border-radius: 8px;
             background: #0a0a0a;
         }
-
-        .feat-card h3 {
-            margin-top: 0;
+        
+        .feat-card h2 {
+            margin: 0 0 10px 0;
             color: #8be9fd;
             font-size: 16px;
         }
-
+        
         .feat-card p {
-            font-size: 12px;
-            line-height: 1.4;
-            margin-bottom: 0;
-        }
-
-        /* 5. Usage Policy */
-        .disclaimer {
-            margin-top: 20px;
-            padding: 10px;
-            border-left: 2px solid #333;
-        }
-
-        .disclaimer h3 {
-            font-size: 14px;
-            margin: 0 0 5px 0;
-        }
-
-        .disclaimer p {
-            font-size: 12px;
-            color: #888;
-            margin: 0;
-        }
-
-        /* 6. Enter App Button Box */
-        .enter-btn {
-            display: block;
-            border: 1px solid #ff9d00;
-            padding: 15px;
-            text-align: center;
-            color: #ff9d00;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-top: 30px;
-            font-weight: bold;
-            transition: 0.3s;
+           color: #f0f8ff;
+           font-size: 12px;
+           line-height: 1.4;
+           margin: 0;
         }
         
-        .enter-btn:hover {
-            background: #ff9d00;
-            color: #000;
+        .enter-btn {
+            display: block;
+            border: 1px solid #2d3748;
+            padding: 15px;
+            text-align: center;
+            color: #f0f8ff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+            letter-spacing: 1px;
         }
+
+        /* Mouse (Hover) */
+.enter-btn:hover {
+    border-color: #8be9fd; /* Cyan */
+    color: #8be9fd; /* Cyan */
+    background: rgba(139, 233, 253, 0.05);
+}
+
+/* btn (Active) */
+.enter-btn:active {
+    transform: scale(0.98); 
+    border-color: #8be9fd !important;
+    color: #8be9fd !important;
+    background: rgba(139, 233, 253, 0.1) !important;
+}
+        }
+        
     </style>
 </head>
 <body>
     <div id="welcome-page">
-        <div class="hero">
-            <h1 class="logo">FREETALK</h1>
-            <p>Your ephemeral thoughts, safe for 14 days.</p>
+        <div class="head">
+            <h1 class="logo">1reeT4lk</h1>
+            <p>https://1ree-t4lk.vercel.app/</p>
         </div>
 
         <div class="features-grid">
             <div class="feat-card">
-                <h3>Anonymous</h3>
-                <p>No login required. Just jump in and talk.</p>
+                <h2>Anonymous</h2>
+                <p>No accounts. Just text. Deletes in 14 days.</p>
             </div>
+                
             <div class="feat-card">
-                <h3>Transient</h3>
-                <p>Posts automatically expire after 14 days.</p>
+                <h2>Trace-Free</h2>
+                <p>No IP logs. No sign-up. Purely ephemeral.</p>
             </div>
         </div>
+        
+        <div class="policy-box">
+    <h3>Privacy Policy</h3>
+    <p class="last-update">Last Updated: 12-Mar-2026(THU)</p>
+    <hr>
+    
+    <div class="policy-content">
+        <h4>1. Introduction</h4>
+        <p>Welcome to 1reeT4lk. We value your privacy and are committed to protecting your personal data. This policy explains how we handle your information.</p>
 
-        <div class="disclaimer">
-            <h3>Usage Policy</h3>
-            <p>Use VPN/Proxy for privacy. Please be responsible with your content.</p>
-        </div>
+        <h4>2. Information We Collect</h4>
+        <ul>
+            <li><strong>Anonymous Data:</strong> We do not require accounts or names.</li>
+            <li><strong>Ephemeral Content:</strong> Your messages are strictly text-based.</li>
+            <li><strong>No Logs:</strong> We do not track IP addresses or browser fingerprints.</li>
+        </ul>
 
-        <a href="app.html" class="enter-btn">Enter App</a>
+        <h4>3. How We Use Your Data</h4>
+        <ol>
+            <li>To provide a purely anonymous communication channel.</li>
+            <li>To maintain our 14-day auto-delete cycle.</li>
+        </ol>
+
+        <blockquote class="policy-note">
+            <strong>Important Note:</strong> We will never sell your personal data to third parties. All posts are self-destructed in 14 days.
+        </blockquote>
+
+        <h4>4. Contact Us</h4>
+        <p>Email: admin@1ree-t4lk.app<br>Address: Yangon, Myanmar</p>
+    </div>
+</div>
+
+<style>
+    /* Policy Box Styling */
+    .policy-box {
+        background: #0a0a0a;
+        border: 1px solid #2d3748;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 20px 0;
+        max-height: 250px; /* အမြင့်ကို ကန့်သတ်ထားမည် */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .policy-box h3 { font-size: 16px; margin: 0; color: #f0f8ff; text-align: center; }
+    .last-update { font-size: 11px; color: #888; text-align: center; margin: 5px 0; }
+    
+    .policy-content {
+        overflow-y: auto; /* Scroll */
+        font-size: 12px;
+        line-height: 1.5;
+        color: #ccc;
+        padding-right: 5px;
+    }
+
+    /* Scrollbar Style */
+    .policy-content::-webkit-scrollbar { width: 4px; }
+    .policy-content::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+    .policy-content h4 { color: #f0f8ff; font-size: 13px; margin: 15px 0 5px 0; }
+    .policy-content ul, .policy-content ol { padding-left: 20px; }
+    .policy-note {
+        border-left: 3px solid #ff0000;
+        background: rgba(255, 0, 0, 0.05);
+        padding: 10px;
+        margin: 10px 0;
+        font-style: italic;
+    }
+</style>
+    
+        <a href="app.html" class="enter-btn">ENTER APP</a>
     </div>
 </body>
 </html>
