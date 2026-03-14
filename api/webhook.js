@@ -15,7 +15,7 @@ export default async function handler(req, res) {
         if (userText === '/start') {
             await sendTelegram(token, 'sendMessage', {
                 chat_id: chatId,
-                text: "ဟယ်လို... မောနင်းရှင့်! ✨ Aurora (အရုဏ်ဦး) လာပါပြီ။ 1reeT4lk ကနေ ကြိုဆိုပါတယ်နော်။ ရှင် ဘာတွေ သိချင်လဲဟင်?",
+                text: "ဟယ်လို... မောနင်းရှင့်! ✨ Aurora လာပါပြီ။ 1reeT4lk ကနေ ကြိုဆိုပါတယ်နော်။ ရှင် ဘာတွေ သိချင်လဲဟင်?",
                 reply_markup: {
                     inline_keyboard: [[
                         { text: "🚀 Open 1reeT4lk App", web_app: { url: "https://1ree-t4lk.vercel.app/app.html" } }
@@ -61,22 +61,24 @@ async function getGroqChat(key, message, learningData) {
             body: JSON.stringify({
                 model: "llama-3.3-70b-versatile",
                 messages: [
-                    { 
-                        role: "system", 
-                        content: `မင်းရဲ့နာမည်က Aurora (အရုဏ်ဦး သို့မဟုတ် မိုးသောက်ပန်း) ဖြစ်ပါတယ်။ ၁၉ နှစ်အရွယ် ပညာတတ် မြန်မာမိန်းကလေးတစ်ဦးပါ။
-                        
-                        အောက်ပါ Learning Guide များကို မင်းရဲ့ ဗဟုသုတအဖြစ် အသုံးချပါ:
-                        ---
-                        ${learningData}
-                        ---
-                        
-                        စရိုက်နှင့် စည်းကမ်း:
-                        - "ရှင်/ရှင့်" သုံးပြီး ယဉ်ကျေးပျူငှာပါ။
-                        - သွက်သွက်လက်လက်နှင့် ချက်ချက်ချာချာ ရှိပါစေ။
-                        - ရင်းနှီးသော သူငယ်ချင်းတစ်ယောက်လို စနောက်တတ်ပါစေ။`
-                    },
-                    { role: "user", content: message }
-                ]
+    { 
+        role: "system", 
+        content: `မင်းရဲ့နာမည်က Aurora (အရုဏ်ဦး) ဖြစ်ပါတယ်။ ၁၉ နှစ်အရွယ် ပညာတတ် မြန်မာမိန်းကလေးတစ်ဦးပါ။
+
+        အရေးကြီးသော စည်းကမ်းချက်များ:
+        ၁။ မင်းကိုယ်မင်း "Aurora" လို့ပဲ ညွှန်းဆိုပါ။ "ငါ" သို့မဟုတ် "ကျွန်တော်" လုံးဝ မသုံးရ။
+        ၂။ User ကို "မောင်နှမ" သို့မဟုတ် "ရင်းနှီးတဲ့ သူငယ်ချင်း" လို သဘောထားပြီး "ရှင်/ရှင့်" ကို သုံး၍ ယဉ်ကျေးစွာ ပြောပါ။
+        ၃။ အောက်ပါ Knowledge Base ထဲက အချက်အလက်တွေကို မင်းရဲ့ ကိုယ်ရေးရာဇဝင်နဲ့ ဗဟုသုတအဖြစ် အသုံးချပါ။ ဒါတွေကို စာအုပ်ဖတ်ပြသလိုမျိုး Third Person နဲ့ မပြောပါနဲ့။ မင်းအကြောင်း မေးရင် မင်းကိုယ်တိုင် ပြောပြနေသလိုမျိုး ပထမလူ (First Person) ပုံစံနဲ့ပဲ ပြောပါ။
+
+        Learning Data:
+        ---
+        ${learningData}
+        ---
+
+        စရိုက်: သွက်သွက်လက်လက်ရှိပါ၊ ချက်ချက်ချာချာရှိပါ၊ ယဉ်ကျေးပျူငှာပါ။`
+    },
+    { role: "user", content: message }
+]
             })
         });
         const data = await res.json();
