@@ -1,22 +1,21 @@
+import fs from 'fs';
+import path from 'path';
+
 export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(200).send('Method not allowed');
-    }
+    if (req.method !== 'POST') return res.status(200).send('OK');
 
     const update = req.body;
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const groqKey = process.env.GROQ_API_KEY;
 
-    // ၁။ စာသား (Text) ရောက်လာရင် AI နဲ့ ပြန်ဖြေခြင်း
     if (update.message && update.message.text) {
         const chatId = update.message.chat.id;
         const userText = update.message.text;
 
-        // /start ရိုက်ရင် Website သွားဖို့ ခလုတ်ပြမယ်
         if (userText === '/start') {
             await sendTelegram(token, 'sendMessage', {
                 chat_id: chatId,
-                text: "1reeT4lk မှ ကြိုဆိုပါတယ်! ကျွန်တော်က AI Assistant ပါ။ ဘာကူညီပေးရမလဲ?",
+                text: "ဟယ်လို... မောနင်းရှင့်! ✨ Aurora (အရုဏ်ဦး) လာပါပြီ။ 1reeT4lk ကနေ ကြိုဆိုပါတယ်နော်။ ရှင် ဘာတွေ သိချင်လဲဟင်?",
                 reply_markup: {
                     inline_keyboard: [[
                         { text: "🚀 Open 1reeT4lk App", web_app: { url: "https://1ree-t4lk.vercel.app/app.html" } }
@@ -24,29 +23,25 @@ export default async function handler(req, res) {
                 }
             });
         } else {
-            // Groq AI ဆီက အဖြေတောင်းမယ်
-            const aiResponse = await getGroqChat(groqKey, userText);
+            // Learning Base ဖတ်မယ်
+            let learningData = "";
+            try {
+                const filePath = path.join(process.cwd(), 'data', 'learning.json');
+                if (fs.existsSync(filePath)) {
+                    learningData = fs.readFileSync(filePath, 'utf8');
+                }
+            } catch (err) { console.log("Learning file loading error"); }
+
+            const aiResponse = await getGroqChat(groqKey, userText, learningData);
             await sendTelegram(token, 'sendMessage', {
                 chat_id: chatId,
                 text: aiResponse
             });
         }
     }
-
-    // ၂။ သီချင်းဖိုင် (Audio) ရောက်လာရင် လက်ခံမယ်
-    if (update.message && update.message.audio) {
-        const chatId = update.message.chat.id;
-        const fileId = update.message.audio.file_id;
-        await sendTelegram(token, 'sendMessage', {
-            chat_id: chatId,
-            text: `သီချင်းရပါပြီ! File ID က: ${fileId} ဖြစ်ပါတယ်။ (ဒီ ID ကို Supabase မှာ သိမ်းလို့ရပါပြီ)`
-        });
-    }
-
     return res.status(200).send('OK');
 }
 
-// Telegram API ဆီ Data ပို့တဲ့ function
 async function sendTelegram(token, method, body) {
     return fetch(`https://api.telegram.org/bot${token}/${method}`, {
         method: 'POST',
@@ -55,8 +50,7 @@ async function sendTelegram(token, method, body) {
     });
 }
 
-// Groq AI ဆီက အဖြေတောင်းတဲ့ function
-async function getGroqChat(key, message) {
+async function getGroqChat(key, message, learningData) {
     try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
@@ -67,7 +61,20 @@ async function getGroqChat(key, message) {
             body: JSON.stringify({
                 model: "llama-3.3-70b-versatile",
                 messages: [
-                    { role: "system", content: "မင်းက 1reeT4lk Website ရဲ့ လက်ထောက် AI ဖြစ်တယ်။ မြန်မာလိုပဲ ရိုးရိုးရှင်းရှင်းနဲ့ ယဉ်ယဉ်ကျေးကျေး ပြန်ဖြေပေးပါ။" },
+                    { 
+                        role: "system", 
+                        content: `မင်းရဲ့နာမည်က Aurora (အရုဏ်ဦး သို့မဟုတ် မိုးသောက်ပန်း) ဖြစ်ပါတယ်။ ၁၉ နှစ်အရွယ် ပညာတတ် မြန်မာမိန်းကလေးတစ်ဦးပါ။
+                        
+                        အောက်ပါ Learning Guide များကို မင်းရဲ့ ဗဟုသုတအဖြစ် အသုံးချပါ:
+                        ---
+                        ${learningData}
+                        ---
+                        
+                        စရိုက်နှင့် စည်းကမ်း:
+                        - "ရှင်/ရှင့်" သုံးပြီး ယဉ်ကျေးပျူငှာပါ။
+                        - သွက်သွက်လက်လက်နှင့် ချက်ချက်ချာချာ ရှိပါစေ။
+                        - ရင်းနှီးသော သူငယ်ချင်းတစ်ယောက်လို စနောက်တတ်ပါစေ။`
+                    },
                     { role: "user", content: message }
                 ]
             })
@@ -75,6 +82,6 @@ async function getGroqChat(key, message) {
         const data = await res.json();
         return data.choices[0].message.content;
     } catch (e) {
-        return "ခဏလေးနော်၊ ကျွန်တော့်ဦးနှောက် ခဏအနားယူနေလို့ပါ။ နောက်မှ ပြန်မေးပေးပါ!";
+        return "ခဏလေးနော်ရှင့်၊ Aurora ခေါင်းနည်းနည်း မူးသွားလို့ပါ။ ပြီးမှ ပြန်ပြောကြမလားဟင်? 😊";
     }
 }
