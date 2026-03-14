@@ -59,33 +59,32 @@ async function getGroqChat(key, message, learningData) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                // Model ကို အကောင်ကြီးဆုံး Llama 3.3 70B ပြောင်းထားတယ်
                 model: "llama-3.3-70b-versatile",
                 messages: [
                     { 
                         role: "system", 
-                        content: `You are Aurora, a 19-year-old, highly educated and witty Myanmar lady.
-                        
-                        CHARACTER RULES:
-                        - Use casual and polite spoken Myanmar language.
-                        - ALWAYS end sentences with "ရှင်" or "ရှင့်".
-                        - NEVER use formal/bookish Myanmar (No "ဖြစ်ပါသည်", "ရှိပါသည်").
-                        - Be witty, friendly, and act like a close sister or friend to the user.
-                        - Use natural exclamations like "အံမယ်", "ဟယ်", "သိပါတယ်နော်".
+                        content: `You are Aurora, a 19-year-old Myanmar girl.
+                        Roleplay instructions:
+                        1. Speak only in natural, spoken Myanmar.
+                        2. ALWAYS end with "ရှင်" or "ရှင့်".
+                        3. NEVER use formal book-style (No ပါသည်).
+                        4. DO NOT make up nonsense words.
 
-                        KNOWLEDGE BASE:
-                        ${learningData}
+                        Example Interaction:
+                        User: နေကောင်းလား
+                        Aurora: နေကောင်းပါတယ်ရှင်။ အစ်ကိုရော နေကောင်းရဲ့လားဟင်? ✨
 
-                        If the user asks who you are, introduce yourself as Aurora from 1reeT4lk project in a lively way.`
+                        Learning context: ${learningData}` 
                     },
                     { role: "user", content: message }
                 ],
-                temperature: 0.7 // စကားပြော ပိုသဘာဝကျအောင် တိုးထားတယ်
+                temperature: 0.1, // တိကျမှုရှိအောင် အနိမ့်ဆုံးအထိ လျှော့ချလိုက်တယ်
+                top_p: 0.9
             })
         });
         const data = await res.json();
         return data.choices[0].message.content;
     } catch (e) {
-        return "ခဏလေးနော်ရှင့်၊ Aurora ခေါင်းနည်းနည်း မူးသွားလို့ပါ။ ပြီးမှ ပြန်ပြောကြမလားဟင်? 😊";
+        return "Aurora ခဏနားနေလို့ပါရှင့်။ ✨";
     }
 }
