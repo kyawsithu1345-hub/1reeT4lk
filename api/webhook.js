@@ -1,39 +1,75 @@
+export default async function handler(req, res) {
+    // GET request လာရင် (ဥပမာ Browser ကနေ ကြည့်ရင်)
+    if (req.method !== 'POST') {
+        return res.status(200).send('Aurora Bot is Running with Gemini!');
+    }
+
+    try {
+        const update = req.body;
+        const token = process.env.TELEGRAM_BOT_TOKEN;
+        const geminiKey = process.env.GEMINI_API_KEY;
+
+        if (update.message && update.message.text) {
+            const chatId = update.message.chat.id;
+            const userText = update.message.text;
+
+            // 1. Gemini AI ဆီက အဖြေတောင်းမယ်
+            const aiResponse = await getGeminiChat(geminiKey, userText);
+            
+            // 2. Telegram ဆီ ပြန်ပို့မယ်
+            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: aiResponse
+                })
+            });
+        }
+        
+        return res.status(200).send('OK');
+    } catch (error) {
+        console.error("Handler Error:", error);
+        return res.status(500).send('Internal Server Error');
+    }
+}
+
 async function getGeminiChat(key, message) {
     try {
+        // URL ကို အတိအကျ ပြင်ထားပါတယ်
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
         
-        const auroraSystemPrompt = "Your name is Aurora. A 19-year-old girl from Myanmar. Use 'ရှင်' and 'နော်'. Be warm and poetic.";
+        const auroraSystemPrompt = "Your name is Aurora. You are a 19-year-old girl from Myanmar. Use natural, sweet Myanmar language with 'ရှင်' and 'နော်'.";
 
-        const res = await fetch(url, {
+        const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                system_instruction: { parts: [{ text: auroraSystemPrompt }] },
-                contents: [{ parts: [{ text: message }] }],
-                generationConfig: {
-                    temperature: 0.9,
-                    maxOutputTokens: 1000
+                system_instruction: {
+                    parts: [{ text: auroraSystemPrompt }]
                 },
-                // Safety Settings ကို အကုန် လျှော့ချလိုက်တာပါ
-                safetySettings: [
-                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ]
+                contents: [{
+                    parts: [{ text: message }]
+                }],
+                generationConfig: {
+                    temperature: 0.8,
+                    maxOutputTokens: 800
+                }
             })
         });
 
-        const data = await res.json();
+        const data = await response.json();
+
+        if (data.error) {
+            return "API Error: " + data.error.message;
+        }
 
         if (data.candidates && data.candidates[0].content) {
             return data.candidates[0].content.parts[0].text;
         } else {
-            // Log ထဲမှာ ဘာ Error ပြလဲဆိုတာကို Telegram မှာပါ တစ်ခါတည်း မြင်ရအောင် လုပ်လိုက်မယ်
-            console.error("Gemini Error Detail:", JSON.stringify(data));
-            return "AI က အဖြေမထုတ်ပေးနိုင်ဘူးဖြစ်နေတယ် (Safety Block ဖြစ်နိုင်ပါတယ်)။ Log ကို စစ်ကြည့်ပါဦး။";
+            return "အင်း... ခဏလေးနော်၊ Aurora ဘာပြန်ပြောရမလဲ စဉ်းစားနေလို့ပါ။";
         }
     } catch (e) {
-        return "စနစ်ချို့ယွင်းချက်ရှိနေလို့ ခဏနေမှ ပြန်လာခဲ့ပါဦးနော်။";
+        return "စနစ်လေး နည်းနည်း ပြဿနာတက်နေလို့ ခဏနေမှ ပြန်လာခဲ့ပါဦးနော်။";
     }
 }
