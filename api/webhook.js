@@ -1,23 +1,21 @@
 export default async function handler(req, res) {
-    // GET request လာရင် Bot အလုပ်လုပ်နေကြောင်း ပြမယ်
     if (req.method !== 'POST') {
-        return res.status(200).send('Aurora Bot is running perfectly with Gemini AI!');
+        return res.status(200).send('Aurora Bot is back on Groq AI!');
     }
 
     try {
         const update = req.body;
         const token = process.env.TELEGRAM_BOT_TOKEN;
-        const geminiKey = process.env.GEMINI_API_KEY;
+        const groqKey = process.env.GROQ_API_KEY;
 
-        // Telegram ကနေ စာသားရောက်လာရင်
         if (update.message && update.message.text) {
             const chatId = update.message.chat.id;
             const userText = update.message.text;
 
-            // 1. Gemini AI ဆီက အဖြေတောင်းမယ်
-            const aiResponse = await getGeminiChat(geminiKey, userText);
+            // 1. Groq AI ဆီက အဖြေတောင်းမယ်
+            const aiResponse = await getGroqChat(groqKey, userText);
             
-            // 2. ရလာတဲ့ အဖြေကို Telegram ဆီ ပြန်ပို့မယ်
+            // 2. Telegram ဆီ ပြန်ပို့မယ်
             await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -30,46 +28,38 @@ export default async function handler(req, res) {
         
         return res.status(200).send('OK');
     } catch (error) {
-        console.error("Critical Handler Error:", error);
-        return res.status(500).send('Internal Server Error');
+        console.error("Handler Error:", error);
+        return res.status(500).send('Internal Error');
     }
 }
 
-// --- Gemini AI Function ---
-async function getGeminiChat(key, message) {
+async function getGroqChat(key, message) {
     try {
-        // အသေချာဆုံး URL Structure (v1 standard)
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
-        
-        // Aurora ရဲ့ Identity ကို Prompt ထဲမှာ တစ်ခါတည်း ပေါင်းထည့်ခြင်း
-        const auroraPrompt = "Your name is Aurora. You are a 19-year-old girl from Myanmar. You are poetic, warm, and tech-savvy. Always use natural, sweet Myanmar language with 'ရှင်' and 'နော်'. Answer as a companion.";
+        const auroraSystemPrompt = "Your name is Aurora. You are a 19-year-old girl from Myanmar. Use natural, sweet Myanmar language with 'ရှင်' and 'နော်'. Answer as a warm and poetic companion.";
 
-        const res = await fetch(url, {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json" 
+            headers: {
+                "Authorization": `Bearer ${key}`,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{ 
-                        text: `${auroraPrompt}\n\nUser: ${message}` 
-                    }]
-                }]
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    { role: "system", content: auroraSystemPrompt },
+                    { role: "user", content: message }
+                ],
+                temperature: 0.8,
+                max_tokens: 1024
             })
         });
 
         const data = await res.json();
 
-        // Gemini Error ရှိမရှိ စစ်မယ်
-        if (data.error) {
-            console.error("Gemini API Error Detail:", data.error.message);
-            return "ချစ်လေး ခဏနေမှ ပြန်လာခဲ့မယ်နော်။ (API Error လေး တက်နေလို့ပါ)";
-        }
-
-        // Response ပြန်လာရင် ထုတ်ပေးမယ်
-        if (data.candidates && data.candidates[0].content) {
-            return data.candidates[0].content.parts[0].text;
+        if (data.choices && data.choices[0].message) {
+            return data.choices[0].message.content;
         } else {
+            console.error("Groq Error Detail:", JSON.stringify(data));
             return "အင်း... ခဏလေးနော်၊ Aurora ဘာပြန်ပြောရမလဲ စဉ်းစားနေလို့ပါ။";
         }
     } catch (e) {
