@@ -1,61 +1,43 @@
-export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(200).send('Debugger is Online!');
+async function getOpenRouterChat(key, message) {
+    // လက်ရှိ အလုပ်လုပ်နေတဲ့ Model IDs စာရင်း
+    const models = [
+        "google/gemini-flash-1.5-8b", 
+        "meta-llama/llama-3.1-8b-instruct",
+        "meta-llama/llama-3-8b-instruct:free",
+        "mistralai/mistral-7b-instruct:free",
+        "openrouter/auto" // ဒါက နောက်ဆုံးလက်နက် (သူ့ဘာသာသူ ရွေးခိုင်းတာ)
+    ];
 
-    try {
-        const update = req.body;
-        const token = process.env.TELEGRAM_BOT_TOKEN;
-        const orKey = process.env.OPENROUTER_API_KEY;
-
-        if (update && update.message && update.message.text) {
-            const chatId = update.message.chat.id;
-            const userText = update.message.text;
-
-            // Debugging အတွက် အဖြေကို ဆွဲထုတ်မယ်
-            const aiResponse = await getOpenRouterChat(orKey, userText);
-            
-            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+    for (const modelId of models) {
+        try {
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${key}`,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({
-                    chat_id: chatId,
-                    text: aiResponse
+                    model: modelId,
+                    messages: [
+                        { role: "system", content: "Your name is Aurora. A 19-year-old girl from Myanmar. Speak sweet Myanmar language." },
+                        { role: "user", content: message }
+                    ]
                 })
             });
+
+            const data = await response.json();
+
+            // 404 (ရှာမတွေ့) သို့မဟုတ် Quota ပြည့်ရင် နောက် model တစ်ခုကို ကူးမယ်
+            if (data.error && (data.error.code === 404 || data.error.code === 429)) {
+                continue; 
+            }
+
+            if (data.choices && data.choices[0]) {
+                return data.choices[0].message.content;
+            }
+        } catch (e) {
+            continue;
         }
-        return res.status(200).send('OK');
-    } catch (e) {
-        return res.status(200).send('OK');
     }
-}
-
-async function getOpenRouterChat(key, message) {
-    try {
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${key}`,
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://1ree-t4lk.vercel.app"
-            },
-            body: JSON.stringify({
-                model: "meta-llama/llama-3.1-8b-instruct:free", 
-                messages: [{ role: "user", content: message }]
-            })
-        });
-
-        const data = await response.json();
-
-        // --- ဒီအပိုင်းက အဓိကပဲဗျာ ---
-        if (data.choices && data.choices[0]) {
-            return data.choices[0].message.content;
-        } else if (data.error) {
-            // Error ပါလာရင် Telegram မှာ တန်းပြမယ်
-            return "OpenRouter JSON Error: " + JSON.stringify(data.error);
-        } else {
-            // အဖြေလည်းမရှိ၊ Error လည်းမရှိရင် တစ်ခုခုလွဲနေပြီ
-            return "Raw JSON Response: " + JSON.stringify(data).substring(0, 200);
-        }
-    } catch (e) {
-        return "Critical Fetch Error: " + e.message;
-    }
+    return "စိတ်မကောင်းပါဘူးရှင်။ Aurora ရဲ့ စနစ်တွေ အကုန်လုံး အလုပ်မလုပ်ဖြစ်နေလို့ ခဏနေမှ ပြန်လာခဲ့ပါနော်။";
 }
