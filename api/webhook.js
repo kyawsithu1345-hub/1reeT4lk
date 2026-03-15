@@ -1,7 +1,5 @@
 export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(200).send('Aurora Bot is ready on Meta Llama!');
-    }
+    if (req.method !== 'POST') return res.status(200).send('Debugger is Online!');
 
     try {
         const update = req.body;
@@ -12,7 +10,7 @@ export default async function handler(req, res) {
             const chatId = update.message.chat.id;
             const userText = update.message.text;
 
-            // Meta Llama 3.1 Free Model ကို သုံးပြီး အဖြေတောင်းမယ်
+            // Debugging အတွက် အဖြေကို ဆွဲထုတ်မယ်
             const aiResponse = await getOpenRouterChat(orKey, userText);
             
             await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -24,10 +22,8 @@ export default async function handler(req, res) {
                 })
             });
         }
-        
         return res.status(200).send('OK');
-    } catch (error) {
-        console.error("Handler Error:", error);
+    } catch (e) {
         return res.status(200).send('OK');
     }
 }
@@ -39,35 +35,27 @@ async function getOpenRouterChat(key, message) {
             headers: {
                 "Authorization": `Bearer ${key}`,
                 "Content-Type": "application/json",
-                "HTTP-Referer": "https://1ree-t4lk.vercel.app", 
-                "X-Title": "Aurora Bot"
+                "HTTP-Referer": "https://1ree-t4lk.vercel.app"
             },
             body: JSON.stringify({
-                // Meta ရဲ့ အတည်ငြိမ်ဆုံး Free Model ID ပါ
                 model: "meta-llama/llama-3.1-8b-instruct:free", 
-                messages: [
-                    { 
-                        role: "system", 
-                        content: "Your name is Aurora. A 19-year-old girl from Myanmar. Always speak in Myanmar language. Use sweet and polite words like 'ရှင်' and 'နော်'." 
-                    },
-                    { role: "user", content: message }
-                ]
+                messages: [{ role: "user", content: message }]
             })
         });
 
         const data = await response.json();
 
-        // Error message စစ်ဆေးမယ်
-        if (data.error) {
-            return `OpenRouter Error: ${data.error.message}`;
-        }
-
+        // --- ဒီအပိုင်းက အဓိကပဲဗျာ ---
         if (data.choices && data.choices[0]) {
             return data.choices[0].message.content;
+        } else if (data.error) {
+            // Error ပါလာရင် Telegram မှာ တန်းပြမယ်
+            return "OpenRouter JSON Error: " + JSON.stringify(data.error);
         } else {
-            return "အင်း... ခဏလေးနော်၊ Aurora ဘာပြန်ပြောရမလဲ စဉ်းစားနေလို့ပါ။";
+            // အဖြေလည်းမရှိ၊ Error လည်းမရှိရင် တစ်ခုခုလွဲနေပြီ
+            return "Raw JSON Response: " + JSON.stringify(data).substring(0, 200);
         }
     } catch (e) {
-        return "Aurora ဆီမှာ error တက်နေလို့ ခဏနေမှ ပြန်လာခဲ့ပါဦးနော်။";
+        return "Critical Fetch Error: " + e.message;
     }
 }
