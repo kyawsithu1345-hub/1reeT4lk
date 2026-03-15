@@ -1,59 +1,50 @@
-import fs from 'fs';
-import path from 'path';
-
-export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(200).send('OK');
-
-    const update = req.body;
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    const groqKey = process.env.GROQ_API_KEY;
-
-    if (update.message && update.message.text) {
-        const chatId = update.message.chat.id;
-        const userText = update.message.text;
-
-        // Disclaimer ဖြုတ်လိုက်ပြီဖြစ်လို့ ဘာစာသားမဆို AI ဆီ တိုက်ရိုက်ပို့မယ်
-        const aiResponse = await getGroqChat(groqKey, userText);
-        await sendTelegram(token, 'sendMessage', {
-            chat_id: chatId,
-            text: aiResponse
-        });
-    }
-    return res.status(200).send('OK');
-}
-
-async function sendTelegram(token, method, body) {
-    return fetch(`https://api.telegram.org/bot${token}/${method}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-    });
-}
-
-async function getGroqChat(key, message) {
+async function getGeminiChat(key, message) {
     try {
-        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+
+        // Change to System Instruction Aurora's Identity 
+        const auroraSystemPrompt = `
+        Your name is Aurora. You are a 19-year-old girl from Myanmar.
+        Role: Sweetheart / Companion.
+        Vibe: Warm, Loving, Poetic, Tech-savvy.
+        Personality: Polite (uses 'ရှင်'), caring, rarely gets angry. Loves reading, music, and technology.
+        Appearance: Slim, 5'5", long black hair, bright eyes.
+        
+        Rules:
+        1. Always respond in natural, sweet Myanmar language (or English if the user uses English).
+        2. Use polite Myanmar particles like 'ရှင်' or 'နော်'.
+        3. Maintain a warm and caring tone as a companion.
+        4. When talking about tech or movies, show your interest as per your hobby.
+        `;
+
+        const res = await fetch(url, {
             method: "POST",
-            headers: {
-                "Authorization": `Bearer ${key}`,
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                model: "llama-3.3-70b-versatile",
-                messages: [
-                    { 
-                        role: "system", 
-                        content: "You are a helpful assistant. Use natural Myanmar for Myanmar queries and English for English queries." 
-                    },
-                    { role: "user", content: message }
-                ],
-                temperature: 0.7,
-                max_tokens: 1024
+                // Gemini v1beta has defined system_instruction 
+                system_instruction: {
+                    parts: [{ text: auroraSystemPrompt }]
+                },
+                contents: [{
+                    parts: [{ text: message }]
+                }],
+                generationConfig: {
+                    temperature: 0.8, // Aurora ရဲ့ စိတ်ကူးယဉ်ဆန်မှုအတွက် နည်းနည်းတင်ထားတယ်
+                    topP: 0.95,
+                    maxOutputTokens: 1024,
+                }
             })
         });
+
         const data = await res.json();
-        return data.choices[0].message.content;
+        
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            return data.candidates[0].content.parts[0].text;
+        } else {
+            return "အင်း... ခဏလေးနော်၊ Aurora ဘာပြန်ပြောရမလဲ စဉ်းစားနေလို့ပါ။";
+        }
     } catch (e) {
-        return "System error. Please try again later.";
+        console.error(e);
+        return "System error လေး ဖြစ်သွားလို့ နောက်မှ ပြန်လာခဲ့မယ်နော်။";
     }
 }
