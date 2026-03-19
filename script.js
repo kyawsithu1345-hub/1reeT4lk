@@ -20,7 +20,7 @@ function toggleMusic() {
         audio.play().then(() => { 
             isPlaying = true; 
             
-            // [ADD-START] Notification မှာ သီချင်းနာမည်နှင့် ခလုတ်များပေါ်ရန်
+            // [ADD-START] Notification on Songs Name and Button
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: playlist[currentTrackIndex].name,
@@ -28,7 +28,7 @@ function toggleMusic() {
                     artwork: [{ src: 'https://cdn-icons-png.flaticon.com/512/3844/3844724.png', sizes: '512x512', type: 'image/png' }]
                 });
 
-                // Next Button နှင့် အခြား Control များပေါ်အောင် ဒီမှာပါ ထည့်ပေးရပါမယ်
+                // Next Button & Other Control Button
                 navigator.mediaSession.setActionHandler('play', () => toggleMusic());
                 navigator.mediaSession.setActionHandler('pause', () => toggleMusic());
                 navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
@@ -53,7 +53,7 @@ function playNext() {
     audio.src = playlist[currentTrackIndex].url;
     audio.load();
 
-    // [ADD-START] Next လုပ်တဲ့အခါ Notification ပါ လိုက်ပြောင်းရန်
+    // [ADD-START] Notification Change Click Next Button
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
             title: playlist[currentTrackIndex].name,
@@ -202,6 +202,27 @@ function toggleComments(postId) {
     el.style.display = (el.style.display === "none") ? "block" : "none";
 }
 
+// Share Function (with Browser Native Share API )
+async function sharePost(username, body) {
+    const shareData = {
+        title: '1reeT4lk Post',
+        text: `${username} says: ${body.substring(0, 100)}...`,
+        url: window.location.href
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            // Link Copy for Share API Unsupport Browser
+            navigator.clipboard.writeText(`${username}: ${body}\nShared from 1reeT4lk`);
+            alert("Link copied to clipboard!");
+        }
+    } catch (err) {
+        console.error("Share failed:", err);
+    }
+}
+
 function savePost(user, time, text) {
     const content = `User: ${user}\nTime: ${time}\n\n${text.replace(/<\/?[^>]+(>|$)/g, "")}`;
     const blob = new Blob([content], { type: "text/plain" });
@@ -268,15 +289,20 @@ async function loadPosts() {
                 <div><span id="rm-${p.id}" class="read-more-btn" onclick="toggleReadMore('${p.id}')" style="display:none">Read more...</span></div>
                 
                 <div class="post-actions">
-                    <div class="action-row">
-                        <div class="action-left">
-                            <span class="comment-toggle" onclick="toggleComments('${p.id}')">${postComments.length} comments</span>
-                        </div>
-                        <div class="action-right">
-                            <span class="save-btn" onclick="savePost('${p.username}','Time', \`${p.body.replace(/`/g, "\\`")}\`)">save</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="action-row">
+        <div class="action-left">
+            <span class="comment-toggle" onclick="toggleComments('${p.id}')">${postComments.length} Reply</span>
+        </div>
+
+        <div class="action-center">
+            <span class="share-btn" onclick="sharePost('${p.username}', \`${p.body.replace(/`/g, "\\`")}\`)">Share</span>
+        </div>
+
+        <div class="action-right">
+            <span class="save-btn" onclick="savePost('${p.username}','Time', \`${p.body.replace(/`/g, "\\`")}\`)">Save</span>
+        </div>
+    </div>
+</div>
 
                 <div id="comments-container-${p.id}" class="comment-section" style="display:none">
                     ${postComments.map(c => `
@@ -341,8 +367,6 @@ async function addComment(postId) {
     loadPosts();
 }
 
-// Update Process(13-3-2026)
-// Code Comments Clear
-// Add Section (10)
-// Add Text Checker in S(4)
-// Remove Datetime Section
+// Update 
+//v3.0.0(13-03-2026)
+//v3.0.1(19-03-2026)

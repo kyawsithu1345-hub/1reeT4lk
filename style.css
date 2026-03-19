@@ -113,7 +113,7 @@ button, .reload-btn,  #submit-btn {
 .read-more-btn {
   font-family: 'poppins', sans-serif;
   font-size: 12px;
-  color: #8be9fd;
+  color: #90EE90;/*#8be9fd*/
   cursor: pointer;
 }
 
@@ -147,12 +147,42 @@ input:focus, textarea:focus, .comment-input:focus, #post-text:focus {
   resize: none;
 }
 
-/*6. ACTION BAR & TIME*/
+/* 6. ACTION BAR (Clean Version) */
 .action-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin-top: 10px;
+}
+
+.action-left, .action-right, .action-center {
+  flex: 1;
+}
+
+.action-left {
+  text-align: left;
+}
+
+.action-center {
+  text-align: center;
+}
+
+.action-right {
+  text-align: right;
+}
+
+/* Text Style များ */
+.comment-toggle, .share-btn, .save-btn {
+  font-family: 'poppins', sans-serif;
+  cursor: pointer;
+  font-size: 13px;
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.comment-toggle:hover, .share-btn:hover, .save-btn:hover {
+  color: #8be9fd;
 }
 
 .post-time {
@@ -160,19 +190,14 @@ input:focus, textarea:focus, .comment-input:focus, #post-text:focus {
   font-size: 11px;
 }
 
-.comment-toggle, .save-btn {
-  font-family: 'poppins', sans-serif;
-  cursor: pointer;
-  font-size: 13px;
-  color: #aaa;
+.time-status { 
+  color: #8be9fd !important; 
 }
-
-.time-status { color: #8be9fd !important; }
 
 /* 8.Custom Link */
 /*italic*/
 .custom-link {
-  color: #00f;
+  color: #87CEFA;
   font-style: italic;
   font-weight: 600;
   text-decoration: none; 
