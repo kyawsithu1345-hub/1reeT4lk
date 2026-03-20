@@ -19,7 +19,7 @@ let playlist = [
     {
         name: "Halsey - Without Me",
         url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/Halsey%20-%20Without%20Me.mp3"
-    }, // <-- ဒီနေရာမှာ Comma လိုပါတယ်
+    },
     { 
         name: "NiExshadow - If I Live Without You", 
         url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/NiExshadow%20-%20If%20I%20Live%20Without%20You.mp3" 
@@ -27,5 +27,14 @@ let playlist = [
     { 
         name: "NiExshadow - You Will Never Stay Forever",
         url: "https://jyhxqlwhvptzmvtzrytg.supabase.co/storage/v1/object/public/music/NiExshadow%20-%20You%20Will%20Never%20Stay%20Forever.mp3"
+    },
+    {
+    //Catbox
+        name: "Tate McRae - Sports car",
+        url: "https://files.catbox.moe/23ciof.mp3"
+    },
+    {
+        name: "TYSM - Normal No More",
+        url: "https://files.catbox.moe/aautmt.mp3"
     },
 ];
