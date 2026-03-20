@@ -290,7 +290,7 @@ async function loadPosts() {
                     `).join("")}
                     
                     <div class="comment-input-row">
-                        <input type="text" id="in-${p.id}" class="comment-input" placeholder="Reply...">
+                        <input type="text" id="in-${p.id}" class="comment-input" placeholder="Comments...">
                         <button class="send-btn" onclick="addComment('${p.id}')">Send</button>
                     </div>
                 </div>
