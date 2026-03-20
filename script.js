@@ -144,6 +144,7 @@ let output = escapeHTML(text);
             else if (host.includes("t.me")) label = "• telegram";
             else if (host.includes("pinterest.com") || host.includes("pin.it")) label = "• pinterest";
             else if (host.includes("supabase.co")) label = "• supabase";
+            else if (host.includes("files.catbox.moe")) label = "• catbox";
             else if (host.includes("drive.google.com")) label = "• google drive";
             else if (host.includes("docs.google.com")) label = "• google docs";
             else label = u.hostname.replace('www.', '');

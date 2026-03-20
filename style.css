@@ -172,7 +172,7 @@ input:focus, textarea:focus, .comment-input:focus, #post-text:focus {
 /* 8.Custom Link */
 /*italic*/
 .custom-link {
-  color: #00f;
+  color: #00BFFF;
   font-style: italic;
   font-weight: 600;
   text-decoration: none; 
