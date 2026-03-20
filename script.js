@@ -20,7 +20,7 @@ function toggleMusic() {
         audio.play().then(() => { 
             isPlaying = true; 
             
-            // [ADD-START] Notification on Songs Name and Button
+            // [ADD-START] Notification မှာ သီချင်းနာမည်နှင့် ခလုတ်များပေါ်ရန်
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: playlist[currentTrackIndex].name,
@@ -28,7 +28,7 @@ function toggleMusic() {
                     artwork: [{ src: 'https://cdn-icons-png.flaticon.com/512/3844/3844724.png', sizes: '512x512', type: 'image/png' }]
                 });
 
-                // Next Button & Other Control Button
+                // Next Button နှင့် အခြား Control များပေါ်အောင် ဒီမှာပါ ထည့်ပေးရပါမယ်
                 navigator.mediaSession.setActionHandler('play', () => toggleMusic());
                 navigator.mediaSession.setActionHandler('pause', () => toggleMusic());
                 navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
@@ -53,7 +53,7 @@ function playNext() {
     audio.src = playlist[currentTrackIndex].url;
     audio.load();
 
-    // [ADD-START] Notification Change Click Next Button
+    // [ADD-START] Next လုပ်တဲ့အခါ Notification ပါ လိုက်ပြောင်းရန်
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
             title: playlist[currentTrackIndex].name,
@@ -108,13 +108,26 @@ function formatPost(text) {
     if (!text) return "";
     
     // Character Check in (Raw text ) for Text Control 
-    const maxLength = 1000;
-    if (text.length > maxLength) {
-        alert("Maximum " + maxLength + " characters allowed.");
-        text = text.substring(0, maxLength);
-    }
-    
-    let output = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const maxLength = 10000;
+
+if (text.length > maxLength) {
+    alert("စာလုံးရေ " + maxLength + " ထက် ကျော်လွန်နေပါသည်။");
+    text = text.substring(0, maxLength);
+}
+
+// HTML Special Characters တွေကို ပိုပြီး စနစ်တကျ ပြောင်းလဲခြင်း
+function escapeHTML(str) {
+    const chars = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return str.replace(/[&<>"']/g, m => chars[m]);
+}
+
+let output = escapeHTML(text);
 
     /* URL AND LABEL */
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -202,36 +215,6 @@ function toggleComments(postId) {
     el.style.display = (el.style.display === "none") ? "block" : "none";
 }
 
-// Share Function (with Browser Native Share API )
-async function sharePost(username, body) {
-    const shareData = {
-        title: '1reeT4lk Post',
-        text: `${username} says: ${body.substring(0, 100)}...`,
-        url: window.location.href
-    };
-
-    try {
-        if (navigator.share) {
-            await navigator.share(shareData);
-        } else {
-            // Link Copy for Share API Unsupport Browser
-            navigator.clipboard.writeText(`${username}: ${body}\nShared from 1reeT4lk`);
-            alert("Link copied to clipboard!");
-        }
-    } catch (err) {
-        console.error("Share failed:", err);
-    }
-}
-
-function savePost(user, time, text) {
-    const content = `User: ${user}\nTime: ${time}\n\n${text.replace(/<\/?[^>]+(>|$)/g, "")}`;
-    const blob = new Blob([content], { type: "text/plain" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "post.txt";
-    a.click();
-}
-
 /* 7. SUBMIT POST */
 async function submitPost() {
     const textarea = document.getElementById("post-text");
@@ -289,20 +272,13 @@ async function loadPosts() {
                 <div><span id="rm-${p.id}" class="read-more-btn" onclick="toggleReadMore('${p.id}')" style="display:none">Read more...</span></div>
                 
                 <div class="post-actions">
-    <div class="action-row">
-        <div class="action-left">
-            <span class="comment-toggle" onclick="toggleComments('${p.id}')">${postComments.length} Reply</span>
-        </div>
-
-        <div class="action-center">
-            <span class="share-btn" onclick="sharePost('${p.username}', \`${p.body.replace(/`/g, "\\`")}\`)">Share</span>
-        </div>
-
-        <div class="action-right">
-            <span class="save-btn" onclick="savePost('${p.username}','Time', \`${p.body.replace(/`/g, "\\`")}\`)">Save</span>
-        </div>
-    </div>
-</div>
+                    <div class="action-row">
+                        <div class="action-left">
+                            <span class="comment-toggle" onclick="toggleComments('${p.id}')">${postComments.length} comments</span>
+                        </div>
+                        
+                    </div>
+                </div>
 
                 <div id="comments-container-${p.id}" class="comment-section" style="display:none">
                     ${postComments.map(c => `
@@ -367,6 +343,8 @@ async function addComment(postId) {
     loadPosts();
 }
 
-// Update 
-//v3.0.0(13-03-2026)
-//v3.0.1(19-03-2026)
+// Update Process(13-3-2026)
+// Code Comments Clear
+// Add Section (10)
+// Add Text Checker in S(4)
+// Remove Datetime Section
