@@ -70,7 +70,7 @@ document.getElementById("post-text")?.addEventListener("keydown", function(e) {
                 const alerts = [
                     "Song number isn't available in playlist!",
                     "Try Again, find real number for play music.",
-                    "Sorry, the number isn't available. Are you testing me? 😉"
+                    "Sorry, the number isn't available. Are you testing me?"
                 ];
                 alert(alerts[Math.floor(Math.random() * alerts.length)]);
                 e.target.value = ""; 
@@ -107,19 +107,33 @@ function formatPost(text) {
     }
 
     let output = escapeHTML(text);
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    output = output.replace(urlRegex, (url) => {
-        try {
-            const u = new URL(url);
-            const host = u.hostname.toLowerCase();
-            let label = host.includes("facebook.com") ? "• facebook" : 
-                        host.includes("instagram.com") ? "• instagram" :
-                        host.includes("tiktok.com") ? "• tiktok" :
-                        host.includes("youtube.com") ? "• youtube" : 
-                        host.includes("t.me") ? "• telegram" : u.hostname.replace('www.', '');
-            return `<a href="${url}" target="_blank" class="custom-link">${label}</a>`;
-        } catch (e) { return `<a href="${url}" target="_blank" class="custom-link">${url}</a>`; }
-    });
+const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+output = output.replace(urlRegex, (url) => {
+    try {
+        const u = new URL(url);
+        const host = u.hostname.toLowerCase();
+        let label = "";
+
+        // Mapping logic
+        if (host.includes("facebook.com")) label = "• facebook";
+        else if (host.includes("instagram.com")) label = "• instagram";
+        else if (host.includes("tiktok.com")) label = "• tiktok";
+        else if (host.includes("youtube.com")) label = "• youtube";
+        else if (host.includes("twitter.com") || host.includes("x.com")) label = "• twitter";
+        else if (host.includes("t.me")) label = "• telegram";
+        else if (host.includes("pinterest.com") || host.includes("pin.it")) label = "• pinterest";
+        else if (host.includes("supabase.co")) label = "• supabase"; // ပိတ်ကွင်းပိုတာ ပြင်ပြီး
+        else if (host.includes("files.catbox.moe")) label = "• catbox";
+        else if (host.includes("drive.google.com")) label = "• google drive";
+        else if (host.includes("docs.google.com")) label = "• google docs";
+        else label ="•&nbsp;"+ url;
+
+        return `<a href="${url}" target="_blank" class="custom-link">${label}</a>`;
+    } catch (e) { 
+        return `<a href="${url}" target="_blank" class="custom-link"> ${url}</a>`; 
+    }
+});
 
     for (let i = 0; i < 3; i++) {
         output = output.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<b>$1</b>');
