@@ -123,7 +123,8 @@ output = output.replace(urlRegex, (url) => {
         else if (host.includes("twitter.com") || host.includes("x.com")) label = "• twitter";
         else if (host.includes("t.me")) label = "• telegram";
         else if (host.includes("pinterest.com") || host.includes("pin.it")) label = "• pinterest";
-        else if (host.includes("supabase.co")) label = "• supabase"; // ပိတ်ကွင်းပိုတာ ပြင်ပြီး
+        else if (host.includes("dropbox.com")) label = "• dropbox";
+        else if (host.includes("supabase.co")) label = "• supabase";
         else if (host.includes("files.catbox.moe")) label = "• catbox";
         else if (host.includes("drive.google.com")) label = "• google drive";
         else if (host.includes("docs.google.com")) label = "• google docs";
