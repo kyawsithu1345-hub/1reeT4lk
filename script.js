@@ -4,75 +4,65 @@ const _supabase = window.supabase.createClient(
     "sb_publishable_J9NfYlWjgioW_xTDEhCWrg_kQe6kCil"
 );
 
-/* 2. MUSIC PLAYER SETTINGS (Enhanced Easter Egg Logic) */
+/* 2. MUSIC PLAYER SETTINGS (Media Session Focused) */
 let currentTrackIndex = 0;
-let isPlaying = false;
 let audio = new Audio(); 
-
-if (typeof playlist !== 'undefined' && playlist.length > 0) {
-    audio.src = playlist[currentTrackIndex].url;
-}
 
 function updateMediaSession() {
     if ('mediaSession' in navigator && playlist.length > 0) {
+        const track = playlist[currentTrackIndex];
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: playlist[currentTrackIndex].name,
+            title: track.name,
             artist: "1reeT4lk Player",
             artwork: [{ src: 'https://cdn-icons-png.flaticon.com/512/3844/3844724.png', sizes: '512x512', type: 'image/png' }]
         });
-        navigator.mediaSession.setActionHandler('play', () => toggleMusic());
-        navigator.mediaSession.setActionHandler('pause', () => toggleMusic());
-        navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
+
+        navigator.mediaSession.setActionHandler('play', () => audio.play());
+        navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+        navigator.mediaSession.setActionHandler('previoustrack', () => playAdjacent(-1));
+        navigator.mediaSession.setActionHandler('nexttrack', () => playAdjacent(1));
     }
 }
 
-function toggleMusic() {
-    if (audio.paused) {
-        audio.play().then(() => { isPlaying = true; updateMediaSession(); }).catch(e => console.error(e));
-    } else {
-        audio.pause(); isPlaying = false;
+function startTrack(index) {
+    if (index >= 0 && index < playlist.length) {
+        currentTrackIndex = index;
+        audio.pause();
+        audio.src = playlist[currentTrackIndex].url;
+        audio.load();
+        audio.play()
+            .then(() => updateMediaSession())
+            .catch(err => console.log("Interaction required."));
     }
 }
 
-function playNext() {
-    if (playlist.length > 1) {
-        let nextIndex;
-        do { nextIndex = Math.floor(Math.random() * playlist.length); } while (nextIndex === currentTrackIndex);
-        currentTrackIndex = nextIndex;
+function playAdjacent(step) {
+    let newIndex = currentTrackIndex + step;
+    if (newIndex >= 0 && newIndex < playlist.length) {
+        startTrack(newIndex);
+    } else if (newIndex >= playlist.length) {
+        startTrack(0);
+    } else if (newIndex < 0) {
+        startTrack(playlist.length - 1);
     }
-    audio.src = playlist[currentTrackIndex].url;
-    audio.load();
-    updateMediaSession();
-    audio.play().then(() => { isPlaying = true; }).catch(e => console.error(e));
 }
 
-audio.onended = () => playNext();
+audio.onended = () => playAdjacent(1);
 
-// [FIXED] Music Command Logic - Enter ခေါက်မှ အလုပ်လုပ်စေရန် ပြင်ဆင်ထားသည်
 document.getElementById("post-text")?.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
         const inputVal = e.target.value.trim().toLowerCase();
         const playMatch = inputVal.match(/^@play\s*(\d+)$/);
 
         if (playMatch) {
-            e.preventDefault(); // Enter ကြောင့် Post တင်တာကို တားဆီးရန်
+            e.preventDefault();
             const songNumber = parseInt(playMatch[1]);
             const targetIndex = songNumber - 1;
-
             if (targetIndex >= 0 && targetIndex < playlist.length) {
-                currentTrackIndex = targetIndex;
-                audio.src = playlist[currentTrackIndex].url;
-                audio.load();
-                updateMediaSession();
-                audio.play().then(() => { isPlaying = true; }).catch(e => console.error(e));
+                startTrack(targetIndex);
                 e.target.value = ""; 
             } else {
-                const alerts = [
-                    "Song number isn't available in playlist!",
-                    "Try Again, find real number for play music.",
-                    "Sorry, the number isn't available. Are you testing me?"
-                ];
-                alert(alerts[Math.floor(Math.random() * alerts.length)]);
+                alert("Song number not found!");
                 e.target.value = ""; 
             }
         }
@@ -94,8 +84,6 @@ function getUsernameColor(username) {
 }
 
 /* 4. FORMAT POST & FONT SETTINGS */
-const allowedFonts = ["greatvibes"];
-
 function formatPost(text) {
     if (!text) return "";
     const maxLength = 10000;
@@ -107,35 +95,38 @@ function formatPost(text) {
     }
 
     let output = escapeHTML(text);
-const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-output = output.replace(urlRegex, (url) => {
-    try {
-        const u = new URL(url);
-        const host = u.hostname.toLowerCase();
-        let label = "";
+    // [FIXED] URL Mapping Logic with correct brackets
+    output = output.replace(urlRegex, (url) => {
+        try {
+            const u = new URL(url);
+            const host = u.hostname.toLowerCase();
+            let label = "";
 
-        // Mapping logic
-        if (host.includes("facebook.com")) label = "• facebook";
-        else if (host.includes("instagram.com")) label = "• instagram";
-        else if (host.includes("tiktok.com")) label = "• tiktok";
-        else if (host.includes("youtube.com")) label = "• youtube";
-        else if (host.includes("twitter.com") || host.includes("x.com")) label = "• twitter";
-        else if (host.includes("t.me")) label = "• telegram";
-        else if (host.includes("pinterest.com") || host.includes("pin.it")) label = "• pinterest";
-        else if (host.includes("dropbox.com")) label = "• dropbox";
-        else if (host.includes("supabase.co")) label = "• supabase";
-        else if (host.includes("files.catbox.moe")) label = "• catbox";
-        else if (host.includes("drive.google.com")) label = "• google drive";
-        else if (host.includes("docs.google.com")) label = "• google docs";
-        else label ="•&nbsp;"+ url;
+            if (host.includes("dropbox.com")) {
+                label = "• dropbox";
+            } else if (host.includes("twitter.com") || host.includes("x.com")) {
+                label = "• twitter";
+            } else if (host.includes("facebook.com")) label = "• facebook";
+            else if (host.includes("instagram.com")) label = "• instagram";
+            else if (host.includes("tiktok.com")) label = "• tiktok";
+            else if (host.includes("youtube.com")) label = "• youtube";
+            else if (host.includes("t.me")) label = "• telegram";
+            else if (host.includes("pinterest.com") || host.includes("pin.it")) label = "• pinterest";
+            else if (host.includes("supabase.co")) label = "• supabase";
+            else if (host.includes("files.catbox.moe")) label = "• catbox";
+            else if (host.includes("drive.google.com")) label = "• google drive";
+            else if (host.includes("docs.google.com")) label = "• google docs";
+            else label = "•&nbsp;" + url;
 
-        return `<a href="${url}" target="_blank" class="custom-link">${label}</a>`;
-    } catch (e) { 
-        return `<a href="${url}" target="_blank" class="custom-link"> ${url}</a>`; 
-    }
-});
+            return `<a href="${url}" target="_blank" class="custom-link">${label}</a>`;
+        } catch (e) {
+            return `<a href="${url}" target="_blank" class="custom-link">•&nbsp;${url}</a>`;
+        }
+    });
 
+    // BBCode Logic
     for (let i = 0; i < 3; i++) {
         output = output.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<b>$1</b>');
         output = output.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>');
@@ -178,13 +169,13 @@ function toggleReadMore(id) {
 }
 
 function checkReadMore(body, btn) {
-    if (body.scrollHeight > body.clientHeight) btn.style.display = "inline";
-    else btn.style.display = "none";
+    if (body && body.scrollHeight > body.clientHeight) btn.style.display = "inline";
+    else if (btn) btn.style.display = "none";
 }
 
 function toggleComments(postId) {
     const el = document.getElementById("comments-container-" + postId);
-    el.style.display = (el.style.display === "none") ? "block" : "none";
+    if (el) el.style.display = (el.style.display === "none") ? "block" : "none";
 }
 
 /* 7. SUBMIT POST */
@@ -193,7 +184,6 @@ async function submitPost() {
     if (!textarea) return;
     const rawText = textarea.value.trim();
     
-    // [FIXED] @play ပါတဲ့စာသားဆိုရင် Database ထဲ Post အဖြစ်မပို့ရန် စစ်ဆေးခြင်း
     if (!rawText || rawText.toLowerCase().startsWith("@play")) {
         textarea.value = "";
         return;
@@ -216,6 +206,7 @@ async function loadPosts() {
     await _supabase.from("posts").delete().lt("last_activity", fourteenDaysAgo.toISOString());
     const { data: posts } = await _supabase.from("posts").select("*").order("last_activity", { ascending: false });
     const { data: comments } = await _supabase.from("comments").select("*");
+    
     feed.innerHTML = "";
     if (!posts) return;
 
@@ -236,15 +227,12 @@ async function loadPosts() {
         setTimeout(() => {
             const body = document.getElementById("body-" + p.id);
             const btn = document.getElementById("rm-" + p.id);
-            if (body && btn) checkReadMore(body, btn);
-        }, 50);
+            checkReadMore(body, btn);
+        }, 100);
     });
 }
 
-/* 9. INITIALIZE */
-loadPosts();
-
-/* 10. ADD COMMENT FUNCTION */
+/* 9. ADD COMMENT FUNCTION */
 async function addComment(postId) {
     const input = document.getElementById("in-" + postId);
     if (!input) return;
@@ -256,3 +244,6 @@ async function addComment(postId) {
     await _supabase.from("posts").update({ last_activity: now }).eq("id", postId);
     input.value = ""; loadPosts();
 }
+
+/* 10. INITIALIZE */
+loadPosts();
