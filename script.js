@@ -4,9 +4,22 @@ const _supabase = window.supabase.createClient(
     "sb_publishable_J9NfYlWjgioW_xTDEhCWrg_kQe6kCil"
 );
 
-/* 2. MUSIC PLAYER SETTINGS (Media Session Focused) */
+/* 2. MUSIC PLAYER SETTINGS (Media Session Focused with Duration) */
 let currentTrackIndex = 0;
 let audio = new Audio(); 
+
+// Browser Player မှာ Duration နဲ့ Progress Bar ပြပေးဖို့ Function
+function updatePositionState() {
+    if ('mediaSession' in navigator && 'setPositionState' in navigator) {
+        if (!isNaN(audio.duration) && audio.duration > 0) {
+            navigator.mediaSession.setPositionState({
+                duration: audio.duration,
+                playbackRate: audio.playbackRate,
+                position: audio.currentTime
+            });
+        }
+    }
+}
 
 function updateMediaSession() {
     if ('mediaSession' in navigator && playlist.length > 0) {
@@ -14,13 +27,35 @@ function updateMediaSession() {
         navigator.mediaSession.metadata = new MediaMetadata({
             title: track.name,
             artist: "1reeT4lk Player",
-            artwork: [{ src: 'https://cdn-icons-png.flaticon.com/512/3844/3844724.png', sizes: '512x512', type: 'image/png' }]
+            artwork: [
+                { 
+                    src: 'logo.png',
+                    sizes: '512x512', 
+                    type: 'image/png' 
+                },
+                { 
+                    src: 'logo.png', 
+                    sizes: '617x617', 
+                    type: 'image/png' 
+                }
+            ]
         });
+
+        // Duration ကို စတင်သတ်မှတ်ခြင်း
+        updatePositionState();
 
         navigator.mediaSession.setActionHandler('play', () => audio.play());
         navigator.mediaSession.setActionHandler('pause', () => audio.pause());
         navigator.mediaSession.setActionHandler('previoustrack', () => playAdjacent(-1));
         navigator.mediaSession.setActionHandler('nexttrack', () => playAdjacent(1));
+        
+        // Progress bar ကို ဆွဲပြီး အချိန်ရွှေ့နိုင်ရန်
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+            if (details.seekTime) {
+                audio.currentTime = details.seekTime;
+                updatePositionState();
+            }
+        });
     }
 }
 
@@ -31,10 +66,23 @@ function startTrack(index) {
         audio.src = playlist[currentTrackIndex].url;
         audio.load();
         audio.play()
-            .then(() => updateMediaSession())
+            .then(() => {
+                updateMediaSession();
+            })
             .catch(err => console.log("Interaction required."));
     }
 }
+
+// သီချင်း Load ဖြစ်ပြီး Duration သိရတာနဲ့ Browser ကို အကြောင်းကြားရန်
+audio.onloadedmetadata = () => {
+    updatePositionState();
+};
+
+// သီချင်းဖွင့်နေစဉ် Browser Player ထဲက အချိန်တန်းလေး ပြေးနေစေရန်
+audio.ontimeupdate = () => {
+    // တစ်စက္ကန့်ချင်းစီ update လုပ်ပေးခြင်း
+    updatePositionState();
+};
 
 function playAdjacent(step) {
     let newIndex = currentTrackIndex + step;
