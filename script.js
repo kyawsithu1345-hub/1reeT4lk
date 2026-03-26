@@ -5,7 +5,7 @@ const client = new Client()
     .setProject('69a6a12c001e23614e9c'); // သင့်ရဲ့ Project ID
 
 const databases = new Databases(client);
-const DATABASE_ID = '69a6a39d00026a1fc4ce'; // FT-db ID
+const DATABASE_ID = '69a6e33a000364134b57'; // 69a6a39d... အစား ဒါကို ပြောင်းထည့်ပါ// FT-db ID
 const COLLECTION_ID = 'post';
 
 /* 2. MUSIC PLAYER SETTINGS (Media Session) */
