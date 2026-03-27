@@ -216,8 +216,14 @@ async function loadPosts() {
             setTimeout(() => {
                 const b = document.getElementById("body-" + p.$id);
                 const r = document.getElementById("rm-" + p.$id);
-                if (b && b.scrollHeight > b.clientHeight) r.style.display = "inline";
-            }, 100);
+                if (b && r) {
+                    if (b.scrollHeight > b.clientHeight + 5) {
+                        r.style.display = "inline";
+                    } else {
+                        r.style.display = "none";
+                    }
+                }
+            }, 300); // Wait UI render time
         });
     } catch (err) { console.error("Load error:", err); }
 }
