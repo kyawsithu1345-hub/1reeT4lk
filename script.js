@@ -107,8 +107,17 @@ function formatPost(text) {
         try {
             const host = new URL(url).hostname.toLowerCase();
             let label = host.split('.')[0];
-            if (host.includes("t.me")) label = "telegram";
-            else if (host.includes("pin.it")) label = "pinterest";
+            if (host.includes("facebook.com") || host.includes("fb.watch")) label = "facebook";
+            else if (host.includes("instagram.com")) label = "instagram";
+            else if (host.includes("tiktok.com")) label = "tiktok";
+            else if (host.includes("youtube.com") || host.includes("youtu.be")) label = "youtube";
+            else if (host.includes("twitter.com") || host.includes("x.com")) label = "twitter";
+            else if (host.includes("t.me")) label = "telegram";
+            else if (host.includes("pinterest.com") || host.includes("pin.it")) label = "pinterest";
+            else if (host.includes("supabase.co")) label = "supabase";
+            else if (host.includes("drive.google.com")) label = "google drive";
+            else if (host.includes("docs.google.com")) label = "google docs";
+            else label = u.hostname.replace('www.', '');
             return `<a href="${url}" target="_blank" class="custom-link">•&nbsp;${label}</a>`;
         } catch (e) { return `<a href="${url}" target="_blank" class="custom-link">•&nbsp;link</a>`; }
     });
